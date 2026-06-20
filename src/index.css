@@ -530,3 +530,59 @@ h1, h2, h3, h4 {
   color: var(--green);
   border: 1px solid rgba(142, 230, 80, 0.3);
 }
+
+/* Layout Utilities - Refactoring */
+.page-container-padding {
+  padding-top: 100px;
+  min-height: 100vh;
+  position: relative;
+}
+
+.section-header {
+  margin-bottom: 50px;
+  text-align: center;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.grid-pillars {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 30px;
+}
+
+.grid-halves {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .grid-halves {
+    grid-template-columns: 1fr;
+    gap: 30px;
+  }
+}
+
+.card-icon-wrapper {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

@@ -1,47 +1,34 @@
 import React, { useState } from 'react';
-import { Send, CheckCircle, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-react';
+import { Send, CheckCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-interface WaitlistEntry {
-  id: string;
-  name: string;
-  email: string;
-  company: string;
-  useCase: string;
-  submittedAt: string;
-}
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 
 export const Contact: React.FC = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [company, setCompany] = useState('');
-  const [useCase, setUseCase] = useState('');
+  const [subject, setSubject] = useState('general');
+  const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
-  const [queueNumber, setQueueNumber] = useState(0);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const addContact = useMutation(api.contacts.add);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim()) return;
+    if (!name.trim() || !email.trim() || !message.trim()) return;
 
-    // Get current waitlist from localStorage
-    const existing = localStorage.getItem('zyntral_waitlist');
-    const waitlist: WaitlistEntry[] = existing ? JSON.parse(existing) : [];
-
-    const newEntry: WaitlistEntry = {
-      id: Math.random().toString(36).substring(2, 9),
-      name,
-      email,
-      company: company || 'Self / Independent',
-      useCase: useCase || 'Undecided',
-      submittedAt: new Date().toLocaleString()
-    };
-
-    waitlist.push(newEntry);
-    localStorage.setItem('zyntral_waitlist', JSON.stringify(waitlist));
-    
-    // Setup queue number (mocked base + size)
-    setQueueNumber(137 + waitlist.length);
-    setSubmitted(true);
+    try {
+      await addContact({
+        name: name.trim(),
+        email: email.trim(),
+        subject,
+        message: message.trim()
+      });
+      setSubmitted(true);
+    } catch (err) {
+      console.error('Failed to submit contact message', err);
+      alert('Failed to send message. Please try again.');
+    }
   };
 
   return (
@@ -53,16 +40,16 @@ export const Contact: React.FC = () => {
             <div className="glow-glow"></div>
             
             <div style={{ textAlign: 'center', marginBottom: '35px' }}>
-              <h2 style={{ fontSize: '2rem', marginBottom: '8px' }}>Join Zyntral Developer Beta</h2>
+              <h2 style={{ fontSize: '2rem', marginBottom: '8px' }}>Get In Touch</h2>
               <p style={{ color: 'var(--muted-color)', fontSize: '0.95rem' }}>
-                Register your startup or project to obtain early developer sandbox keys.
+                Contact the Zyntral Labs team for support or partnership inquiries.
               </p>
             </div>
 
             <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
-                <div className="input-group">
+                <div className="input-group" style={{ marginBottom: 0 }}>
                   <label className="input-label">Your Name</label>
                   <input
                     type="text"
@@ -73,8 +60,8 @@ export const Contact: React.FC = () => {
                     placeholder="John Doe"
                   />
                 </div>
-                <div className="input-group">
-                  <label className="input-label">Work Email</label>
+                <div className="input-group" style={{ marginBottom: 0 }}>
+                  <label className="input-label">Email Address</label>
                   <input
                     type="email"
                     required
@@ -86,32 +73,37 @@ export const Contact: React.FC = () => {
                 </div>
               </div>
 
-              <div className="input-group">
-                <label className="input-label">Company / Startup Name</label>
-                <input
-                  type="text"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
+              <div className="input-group" style={{ marginBottom: 0 }}>
+                <label className="input-label">Subject</label>
+                <select
+                  value={subject}
+                  onChange={(e) => setSubject(e.target.value)}
                   className="input-field"
-                  placeholder="Zyntral Logistics Corp"
-                />
+                  style={{ background: 'rgba(0,0,0,0.4)' }}
+                >
+                  <option value="general">General Inquiry</option>
+                  <option value="partnership">Partnerships & Integrations</option>
+                  <option value="support">Developer Support</option>
+                  <option value="press">Press / Media</option>
+                </select>
               </div>
 
-              <div className="input-group">
-                <label className="input-label">Describe your LLM / RAG Use Case</label>
+              <div className="input-group" style={{ marginBottom: 0 }}>
+                <label className="input-label">Message</label>
                 <textarea
-                  value={useCase}
-                  onChange={(e) => setUseCase(e.target.value)}
+                  required
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
                   className="input-field"
-                  rows={3}
+                  rows={4}
                   style={{ resize: 'none', lineHeight: '1.5' }}
-                  placeholder="e.g. Build an automated retrieval agent for legal contracts auditing..."
+                  placeholder="How can we help you?"
                 />
               </div>
 
               <button type="submit" className="btn-primary" style={{ justifyContent: 'center', marginTop: '10px' }}>
                 <Send size={16} />
-                Submit Application
+                Send Message
               </button>
 
             </form>
@@ -124,30 +116,20 @@ export const Contact: React.FC = () => {
               <CheckCircle size={32} />
             </div>
 
-            <h2 style={{ fontSize: '2rem', marginBottom: '10px' }}>Application Received</h2>
+            <h2 style={{ fontSize: '2rem', marginBottom: '10px' }}>Message Sent</h2>
             <p style={{ color: 'var(--muted-color)', maxWidth: '450px', margin: '0 auto 30px', fontSize: '0.95rem', lineHeight: '1.7' }}>
-              Thank you, <strong style={{ color: '#fff' }}>{name}</strong>! Your request was logged. We are reviewing sandbox requests sequentially.
+              Thank you for reaching out, <strong style={{ color: '#fff' }}>{name}</strong>! We will get back to you shortly.
             </p>
-
-            <div style={{ background: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.06)', borderRadius: '15px', padding: '20px', display: 'inline-block', minWidth: '220px', marginBottom: '35px' }}>
-              <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--muted-color)', letterSpacing: '1px' }}>Your Waitlist Spot</span>
-              <div style={{ fontSize: '2.5rem', fontWeight: 800, fontFamily: 'var(--font-display)', color: '#ffffff', marginTop: '5px' }}>
-                #{queueNumber}
-              </div>
-            </div>
 
             <div style={{ display: 'flex', justifyContent: 'center', gap: '15px' }}>
               <Link to="/" className="btn-secondary" style={{ padding: '10px 24px', fontSize: '0.9rem' }}>
                 <ArrowLeft size={16} /> Return Home
               </Link>
-              <Link to="/platform" className="btn-primary" style={{ padding: '10px 24px', fontSize: '0.9rem' }}>
-                Explore Platform <ArrowRight size={16} />
-              </Link>
             </div>
             
             <div style={{ marginTop: '40px', fontSize: '0.75rem', color: 'var(--muted-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}>
               <ShieldCheck size={14} style={{ color: '#d1d5db' }} />
-              <span>Data encrypted & compiled using Zyntral Shield.</span>
+              <span>Data encrypted and secured.</span>
             </div>
           </div>
         )}
