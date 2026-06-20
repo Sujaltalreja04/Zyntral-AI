@@ -1,10 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Settings, Cpu, HardDrive, ArrowRight, Zap } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 export const CustomAISystems: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Custom AI Development & Bespoke Systems"
+        description="Collaborate directly with Zyntral Labs to build custom prompt compilers, bespoke agent topologies, and dedicated neural network models."
+        path="/solutions/custom-ai-systems"
+        keywords={['Custom AI systems', 'bespoke agent topologies', 'dedicated compute GPU', 'neural nodes']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

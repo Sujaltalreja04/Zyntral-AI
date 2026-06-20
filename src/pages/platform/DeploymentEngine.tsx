@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Server, Activity, ShieldCheck, RefreshCw } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 export const DeploymentEngine: React.FC = () => {
   const [deploying, setDeploying] = useState(false);
@@ -20,6 +21,12 @@ export const DeploymentEngine: React.FC = () => {
 
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Deployment Engine - Edge GPU Scheduling"
+        description="Coordinate decentralized agent clusters across low-latency node networks. Package prompts, vector compilations, and model fine-tunes into secure deployments."
+        path="/platform/deployment-engine"
+        keywords={['Deployment engine', 'GPU scheduling', 'cluster management', 'edge serving']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

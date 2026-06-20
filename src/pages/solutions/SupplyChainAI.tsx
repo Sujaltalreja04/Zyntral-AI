@@ -1,10 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Layers, Database, Compass, ArrowRight, Zap } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 export const SupplyChainAI: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Supply Chain Optimization AI"
+        description="Automate stock level audits, streamline vendor communication, and deploy predictive demand models using custom Zyntral prompt workflows."
+        path="/solutions/supply-chain-ai"
+        keywords={['Supply chain AI', 'inventory intelligence', 'demand forecasting', 'vendor coordination']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

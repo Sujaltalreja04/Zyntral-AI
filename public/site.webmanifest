@@ -1,0 +1,16 @@
+{
+  "name": "Zyntral AI Platform",
+  "short_name": "Zyntral",
+  "description": "On-Prompt RAG Compiler and autonomous agent network orchestration platform.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#020205",
+  "theme_color": "#020205",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml"
+    }
+  ]
+}

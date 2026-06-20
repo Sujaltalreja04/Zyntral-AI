@@ -1,9 +1,16 @@
 import React from 'react';
 import { HelpCircle, Target } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 export const Vision: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Our Vision - Decentralized Agent Infrastructure"
+        description="Explore why Zyntral Exists and our long-term vision to build a decentralized computing marketplace and low-latency serverless agent runtime."
+        path="/about/vision"
+        keywords={['Zyntral vision', 'decentralized compute', 'serverless runtime', 'GPU marketplace']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '800px' }}>
         
         {/* Header */}

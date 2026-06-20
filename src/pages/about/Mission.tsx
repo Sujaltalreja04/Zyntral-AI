@@ -1,9 +1,16 @@
 import React from 'react';
 import { Target, Shield } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 export const Mission: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Our Mission - Democratizing AI Compilation"
+        description="Learn about the Zyntral AI operational philosophy and our mission to democratize complex prompt compilation and model training loops."
+        path="/about/mission"
+        keywords={['Zyntral mission', 'operational AI philosophy', 'LoRA cost efficiency']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '800px' }}>
         
         {/* Header */}

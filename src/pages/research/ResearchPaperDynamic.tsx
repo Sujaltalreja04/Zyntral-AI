@@ -4,6 +4,7 @@ import { BookOpen, Calendar, User, ArrowLeft } from 'lucide-react';
 import { RESEARCH_ARTICLES } from '../../data/researchData';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
+import { SEO } from '../../components/SEO';
 
 export const ResearchPaperDynamic: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -52,8 +53,36 @@ export const ResearchPaperDynamic: React.FC = () => {
     .split('\n\n')
     .filter((p: string) => p.trim().length > 0);
 
+  const articleSchema = {
+    "@context": "https://schema.org",
+    "@type": "TechArticle",
+    "headline": article.title,
+    "description": article.desc,
+    "datePublished": article.date,
+    "author": {
+      "@type": "Person",
+      "name": "Sujal Talreja"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Zyntral AI",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.zyntral.dev/assets/Zyntral%20LOGO%20REAL.jpg"
+      }
+    }
+  };
+
   return (
     <div className="page-container-padding">
+      <SEO
+        title={article.title}
+        description={article.desc}
+        path={`/research/${slug}`}
+        type="article"
+        schema={articleSchema}
+        keywords={[article.category, 'Zyntral Research', 'Research Paper']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '800px' }}>
         
         {/* Navigation Breadcrumb */}

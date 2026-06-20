@@ -1,10 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Truck, Navigation, Activity, ArrowRight, Zap } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 export const LogisticsIntelligence: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Logistics Intelligence AI Systems"
+        description="Empower logistics operators with automated route coordinators, delay predictors, and real-time fleet communication loops powered by Zyntral Agent clusters."
+        path="/solutions/logistics-intelligence"
+        keywords={['Logistics AI', 'dynamic routing', 'fleet coordination', 'delay prediction']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

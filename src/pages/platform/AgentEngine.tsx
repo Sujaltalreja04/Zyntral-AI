@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Users, Server, Plus } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 interface AgentNode {
   id: number;
@@ -51,6 +52,12 @@ export const AgentEngine: React.FC = () => {
 
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Agent Engine - Autonomous Orchestrator"
+        description="Provision, coordinate, and orchestrate autonomous AI agent networks with real-time logs, low latency execution, and multi-agent queue monitoring."
+        path="/platform/agent-engine"
+        keywords={['Agent engine', 'autonomous agents', 'AI coordinator', 'node deployment']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

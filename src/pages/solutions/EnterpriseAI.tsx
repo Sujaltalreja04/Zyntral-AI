@@ -1,10 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShieldCheck, Cpu, Layers, ArrowRight, Zap } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 export const EnterpriseAI: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Enterprise AI Systems"
+        description="Deploy custom prompt-to-RAG compilers, model alignment dashboards, and secure autonomous agent loops built for large-scale enterprise environments."
+        path="/solutions/enterprise-ai"
+        keywords={['Enterprise AI', 'SFT', 'DPO tuning', 'enterprise vector database', 'tenant isolation']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

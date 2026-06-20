@@ -3,43 +3,43 @@ import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react
 import { useQuery } from 'convex/react';
 import { api } from '../convex/_generated/api';
 import { ParticlesBg } from './components/ParticlesBg';
-import { Home } from './pages/Home';
-import { AdminPortal } from './pages/AdminPortal';
-import { Roadmap } from './pages/Roadmap';
-import { Waitlist } from './pages/Waitlist';
-import { Contact } from './pages/Contact';
+const Home = React.lazy(() => import('./pages/Home').then(m => ({ default: m.Home })));
+const AdminPortal = React.lazy(() => import('./pages/AdminPortal').then(m => ({ default: m.AdminPortal })));
+const Roadmap = React.lazy(() => import('./pages/Roadmap').then(m => ({ default: m.Roadmap })));
+const Waitlist = React.lazy(() => import('./pages/Waitlist').then(m => ({ default: m.Waitlist })));
+const Contact = React.lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
 
 // Platform section imports
-import { Overview as PlatformOverview } from './pages/platform/Overview';
-import { AgentEngine } from './pages/platform/AgentEngine';
-import { KnowledgeEngine } from './pages/platform/KnowledgeEngine';
-import { WorkflowEngine } from './pages/platform/WorkflowEngine';
-import { DeploymentEngine } from './pages/platform/DeploymentEngine';
+const PlatformOverview = React.lazy(() => import('./pages/platform/Overview').then(m => ({ default: m.Overview })));
+const AgentEngine = React.lazy(() => import('./pages/platform/AgentEngine').then(m => ({ default: m.AgentEngine })));
+const KnowledgeEngine = React.lazy(() => import('./pages/platform/KnowledgeEngine').then(m => ({ default: m.KnowledgeEngine })));
+const WorkflowEngine = React.lazy(() => import('./pages/platform/WorkflowEngine').then(m => ({ default: m.WorkflowEngine })));
+const DeploymentEngine = React.lazy(() => import('./pages/platform/DeploymentEngine').then(m => ({ default: m.DeploymentEngine })));
 
 // Solutions section imports
-import { EnterpriseAI } from './pages/solutions/EnterpriseAI';
-import { LogisticsIntelligence } from './pages/solutions/LogisticsIntelligence';
-import { SupplyChainAI } from './pages/solutions/SupplyChainAI';
-import { KnowledgeSystems } from './pages/solutions/KnowledgeSystems';
-import { CustomAISystems } from './pages/solutions/CustomAISystems';
+const EnterpriseAI = React.lazy(() => import('./pages/solutions/EnterpriseAI').then(m => ({ default: m.EnterpriseAI })));
+const LogisticsIntelligence = React.lazy(() => import('./pages/solutions/LogisticsIntelligence').then(m => ({ default: m.LogisticsIntelligence })));
+const SupplyChainAI = React.lazy(() => import('./pages/solutions/SupplyChainAI').then(m => ({ default: m.SupplyChainAI })));
+const KnowledgeSystems = React.lazy(() => import('./pages/solutions/KnowledgeSystems').then(m => ({ default: m.KnowledgeSystems })));
+const CustomAISystems = React.lazy(() => import('./pages/solutions/CustomAISystems').then(m => ({ default: m.CustomAISystems })));
 
 // Research section imports
-import { Overview as ResearchOverview } from './pages/research/Overview';
-import { AIAgents } from './pages/research/AIAgents';
-import { RAGArchitectures } from './pages/research/RAGArchitectures';
-import { LLMInfrastructure } from './pages/research/LLMInfrastructure';
-import { OpenSourceAnalysis } from './pages/research/OpenSourceAnalysis';
-import { BuildLogs } from './pages/research/BuildLogs';
-import { ResearchPaperDynamic } from './pages/research/ResearchPaperDynamic';
+const ResearchOverview = React.lazy(() => import('./pages/research/Overview').then(m => ({ default: m.Overview })));
+const AIAgents = React.lazy(() => import('./pages/research/AIAgents').then(m => ({ default: m.AIAgents })));
+const RAGArchitectures = React.lazy(() => import('./pages/research/RAGArchitectures').then(m => ({ default: m.RAGArchitectures })));
+const LLMInfrastructure = React.lazy(() => import('./pages/research/LLMInfrastructure').then(m => ({ default: m.LLMInfrastructure })));
+const OpenSourceAnalysis = React.lazy(() => import('./pages/research/OpenSourceAnalysis').then(m => ({ default: m.OpenSourceAnalysis })));
+const BuildLogs = React.lazy(() => import('./pages/research/BuildLogs').then(m => ({ default: m.BuildLogs })));
+const ResearchPaperDynamic = React.lazy(() => import('./pages/research/ResearchPaperDynamic').then(m => ({ default: m.ResearchPaperDynamic })));
 
 // About section imports
-import { Vision } from './pages/about/Vision';
-import { Founder } from './pages/about/Founder';
-import { Mission } from './pages/about/Mission';
+const Vision = React.lazy(() => import('./pages/about/Vision').then(m => ({ default: m.Vision })));
+const Founder = React.lazy(() => import('./pages/about/Founder').then(m => ({ default: m.Founder })));
+const Mission = React.lazy(() => import('./pages/about/Mission').then(m => ({ default: m.Mission })));
 
 // Legal section imports
-import { PrivacyPolicy } from './pages/legal/PrivacyPolicy';
-import { Terms } from './pages/legal/Terms';
+const PrivacyPolicy = React.lazy(() => import('./pages/legal/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
+const Terms = React.lazy(() => import('./pages/legal/Terms').then(m => ({ default: m.Terms })));
 
 import logoImg from './assets/Zyntral LOGO REAL.jpg';
 import { ChevronDown, Menu, X } from 'lucide-react';
@@ -451,53 +451,59 @@ export const App: React.FC = () => {
 
       {/* Page Routing */}
       <div style={{ paddingTop: maintenance ? '40px' : '0px', transition: 'padding-top 0.3s ease' }}>
-        <Routes>
-          <Route path="/" element={<Home />} />
-        
-        {/* Platform Section */}
-        <Route path="/platform" element={<PlatformOverview />} />
-        <Route path="/platform/overview" element={<PlatformOverview />} />
-        <Route path="/platform/agent-engine" element={<AgentEngine />} />
-        <Route path="/platform/knowledge-engine" element={<KnowledgeEngine />} />
-        <Route path="/platform/workflow-engine" element={<WorkflowEngine />} />
-        <Route path="/platform/deployment-engine" element={<DeploymentEngine />} />
-        
-        {/* Solutions Section */}
-        <Route path="/solutions/enterprise-ai" element={<EnterpriseAI />} />
-        <Route path="/solutions/logistics-intelligence" element={<LogisticsIntelligence />} />
-        <Route path="/solutions/supply-chain-ai" element={<SupplyChainAI />} />
-        <Route path="/solutions/knowledge-systems" element={<KnowledgeSystems />} />
-        <Route path="/solutions/custom-ai-systems" element={<CustomAISystems />} />
-        
-        {/* Research Section */}
-        <Route path="/research" element={<ResearchOverview />} />
-        <Route path="/research/overview" element={<ResearchOverview />} />
-        <Route path="/research/ai-agents" element={<AIAgents />} />
-        <Route path="/research/rag-architectures" element={<RAGArchitectures />} />
-        <Route path="/research/llm-infrastructure" element={<LLMInfrastructure />} />
-        <Route path="/research/open-source-analysis" element={<OpenSourceAnalysis />} />
-        <Route path="/research/build-logs" element={<BuildLogs />} />
-        <Route path="/research/:slug" element={<ResearchPaperDynamic />} />
-        
-        {/* Other Sections */}
-        <Route path="/roadmap" element={<Roadmap />} />
-        
-        {/* About Section */}
-        <Route path="/about/vision" element={<Vision />} />
-        <Route path="/about/founder" element={<Founder />} />
-        <Route path="/about/mission" element={<Mission />} />
-        
-        {/* Contact and Waitlist */}
-        <Route path="/waitlist" element={<Waitlist />} />
-        <Route path="/contact" element={<Contact />} />
-        
-        {/* Legal Section */}
-        <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
-        <Route path="/legal/terms" element={<Terms />} />
-        
-        {/* Admin Dashboard */}
-        <Route path="/sujal" element={<AdminPortal />} />
-      </Routes>
+        <React.Suspense fallback={
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', color: 'var(--muted-color)', fontFamily: 'monospace' }}>
+            <span>Compiling runtime layout...</span>
+          </div>
+        }>
+          <Routes>
+            <Route path="/" element={<Home />} />
+          
+            {/* Platform Section */}
+            <Route path="/platform" element={<PlatformOverview />} />
+            <Route path="/platform/overview" element={<PlatformOverview />} />
+            <Route path="/platform/agent-engine" element={<AgentEngine />} />
+            <Route path="/platform/knowledge-engine" element={<KnowledgeEngine />} />
+            <Route path="/platform/workflow-engine" element={<WorkflowEngine />} />
+            <Route path="/platform/deployment-engine" element={<DeploymentEngine />} />
+            
+            {/* Solutions Section */}
+            <Route path="/solutions/enterprise-ai" element={<EnterpriseAI />} />
+            <Route path="/solutions/logistics-intelligence" element={<LogisticsIntelligence />} />
+            <Route path="/solutions/supply-chain-ai" element={<SupplyChainAI />} />
+            <Route path="/solutions/knowledge-systems" element={<KnowledgeSystems />} />
+            <Route path="/solutions/custom-ai-systems" element={<CustomAISystems />} />
+            
+            {/* Research Section */}
+            <Route path="/research" element={<ResearchOverview />} />
+            <Route path="/research/overview" element={<ResearchOverview />} />
+            <Route path="/research/ai-agents" element={<AIAgents />} />
+            <Route path="/research/rag-architectures" element={<RAGArchitectures />} />
+            <Route path="/research/llm-infrastructure" element={<LLMInfrastructure />} />
+            <Route path="/research/open-source-analysis" element={<OpenSourceAnalysis />} />
+            <Route path="/research/build-logs" element={<BuildLogs />} />
+            <Route path="/research/:slug" element={<ResearchPaperDynamic />} />
+            
+            {/* Other Sections */}
+            <Route path="/roadmap" element={<Roadmap />} />
+            
+            {/* About Section */}
+            <Route path="/about/vision" element={<Vision />} />
+            <Route path="/about/founder" element={<Founder />} />
+            <Route path="/about/mission" element={<Mission />} />
+            
+            {/* Contact and Waitlist */}
+            <Route path="/waitlist" element={<Waitlist />} />
+            <Route path="/contact" element={<Contact />} />
+            
+            {/* Legal Section */}
+            <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
+            <Route path="/legal/terms" element={<Terms />} />
+            
+            {/* Admin Dashboard */}
+            <Route path="/sujal" element={<AdminPortal />} />
+          </Routes>
+        </React.Suspense>
       </div>
 
       {/* Footer */}

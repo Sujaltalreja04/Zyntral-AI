@@ -3,6 +3,7 @@ import { Send, CheckCircle, ArrowLeft, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { SEO } from '../components/SEO';
 
 export const Contact: React.FC = () => {
   const [name, setName] = useState('');
@@ -33,6 +34,12 @@ export const Contact: React.FC = () => {
 
   return (
     <div style={{ paddingTop: '120px', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+      <SEO
+        title="Contact Us - Technical Inquiries"
+        description="Contact the Zyntral Labs team for developer support, custom enterprise licensing options, or custom GPU cluster coordination inquiries."
+        path="/contact"
+        keywords={['Contact Zyntral', 'developer support', 'enterprise sales', 'API help']}
+      />
       <div className="container" style={{ maxWidth: '650px', position: 'relative', zIndex: 5 }}>
         
         {!submitted ? (

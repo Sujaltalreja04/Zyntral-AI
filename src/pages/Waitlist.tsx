@@ -3,6 +3,7 @@ import { Send, CheckCircle, ArrowLeft, ArrowRight, ShieldCheck } from 'lucide-re
 import { Link } from 'react-router-dom';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { SEO } from '../components/SEO';
 
 export const Waitlist: React.FC = () => {
   const [name, setName] = useState('');
@@ -38,6 +39,12 @@ export const Waitlist: React.FC = () => {
 
   return (
     <div style={{ paddingTop: '120px', minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
+      <SEO
+        title="Apply for Sandbox Waitlist"
+        description="Submit your application to request developer sandbox access and obtain API keys for Zyntral AI compiler orchestration and node services."
+        path="/waitlist"
+        keywords={['Developer waitlist', 'API key access', 'GPU sandbox access', 'Zyntral keys']}
+      />
       <div className="container" style={{ maxWidth: '650px', position: 'relative', zIndex: 5 }}>
         
         {!submitted ? (

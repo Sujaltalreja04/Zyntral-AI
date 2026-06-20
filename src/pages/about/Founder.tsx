@@ -2,6 +2,7 @@ import React from 'react';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
 import { User, ShieldCheck } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 interface FounderProfile {
   name: string;
@@ -29,6 +30,12 @@ export const Founder: React.FC = () => {
 
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Founder Story - Sujal Talreja"
+        description="Learn more about Sujal Talreja, Founder & Lead Architect of Zyntral AI, and his work building on-prompt RAG compilers and autonomous agent pipelines."
+        path="/about/founder"
+        keywords={['Sujal talreja', 'Sujal k talreja', 'Sujal kishore kumar talreja', 'Sujal zyntral', 'Talreja', 'Zyntral AI Founder']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '800px' }}>
         
         {/* Header */}

@@ -1,10 +1,17 @@
 import React from 'react';
 import { InteractiveRAGBuilder } from '../../components/InteractiveRAGBuilder';
+import { SEO } from '../../components/SEO';
 import { Database, Sparkles, Server } from 'lucide-react';
 
 export const KnowledgeEngine: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Knowledge Engine - Dynamic RAG compilation"
+        description="Design and compile prompt-to-RAG architectures. Setup smart retrieval rerankers, custom vector databases, and real-time semantic query pathways."
+        path="/platform/knowledge-engine"
+        keywords={['Knowledge engine', 'RAG compilation', 'vector databases', 'semantic search']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

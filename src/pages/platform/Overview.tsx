@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, Cpu, Users, Database, ArrowRight, Layers } from 'lucide-react';
 import { ArchitectureDiagram } from '../../components/ArchitectureDiagram';
+import { SEO } from '../../components/SEO';
 
 export const Overview: React.FC = () => {
   const engines = [
@@ -41,6 +42,12 @@ export const Overview: React.FC = () => {
 
   return (
     <div className="page-container-padding">
+      <SEO
+        title="Platform Overview - Developer Console"
+        description="Explore the Zyntral AI platform overview detailing the architecture diagram, Agent Engine, Knowledge Engine, Workflow Engine, and Deployment Engine."
+        path="/platform/overview"
+        keywords={['Developer platform', 'AI architecture', 'RAG compiler', 'agent console']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

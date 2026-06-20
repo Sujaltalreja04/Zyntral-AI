@@ -1,10 +1,17 @@
 import React from 'react';
 import { InteractiveTrainer } from '../../components/InteractiveTrainer';
+import { SEO } from '../../components/SEO';
 import { Cpu, HelpCircle, GitFork } from 'lucide-react';
 
 export const WorkflowEngine: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Workflow Engine - Multi-Agent Orchestration"
+        description="Configure and automate advanced fine-tuning training loops. Connect dataset revisions, LoRA/QLoRA tuning configurations, and preference alignments."
+        path="/platform/workflow-engine"
+        keywords={['Workflow engine', 'agent workflows', 'model alignment', 'fine-tuning pipelines']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

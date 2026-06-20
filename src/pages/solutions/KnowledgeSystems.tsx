@@ -1,10 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Database, Search, ShieldAlert, ArrowRight, Zap } from 'lucide-react';
+import { SEO } from '../../components/SEO';
 
 export const KnowledgeSystems: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Knowledge Systems - Semantic Search Solutions"
+        description="Compile enterprise search indices and context-aware retrieval databases. Reduce development times and avoid manual API configurations."
+        path="/solutions/knowledge-systems"
+        keywords={['Knowledge systems', 'semantic search', 'context-aware retrieval', 'cross-encoders', 'Pinecone integration']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px' }}>
         
         {/* Header */}

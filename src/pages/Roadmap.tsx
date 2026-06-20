@@ -3,6 +3,7 @@ import * as LucideIcons from 'lucide-react';
 import { ROADMAP_STEPS } from '../data/roadmapData';
 import { useQuery } from 'convex/react';
 import { api } from '../../convex/_generated/api';
+import { SEO } from '../components/SEO';
 
 export const Roadmap: React.FC = () => {
   const dbSteps = useQuery(api.roadmap.get);
@@ -20,6 +21,12 @@ export const Roadmap: React.FC = () => {
 
   return (
     <div className="page-container-padding">
+      <SEO
+        title="Product Roadmap & Launch Timeline"
+        description="Follow the Zyntral AI compiler and edge node development phases, release updates, and planned launch milestones."
+        path="/roadmap"
+        keywords={['Zyntral roadmap', 'AI roadmap', 'release timeline', 'product phases']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '750px' }}>
         
         {/* Header */}

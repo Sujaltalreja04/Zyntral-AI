@@ -3,8 +3,22 @@ import { Link } from 'react-router-dom';
 import { ArrowRight, Terminal, Globe, Award, Shield, ChevronRight, Zap, Cpu, Database } from 'lucide-react';
 import logoImg from '../assets/Zyntral LOGO REAL.jpg';
 import { HeroScene3D } from '../components/HeroScene3D';
+import { SEO } from '../components/SEO';
 
 export const Home: React.FC = () => {
+  const homepageSchema = {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Zyntral AI",
+    "operatingSystem": "All",
+    "applicationCategory": "DeveloperApplication",
+    "description": "On-Prompt RAG Compiler and autonomous agent network orchestration platform.",
+    "offers": {
+      "@type": "Offer",
+      "price": "0.00",
+      "priceCurrency": "USD"
+    }
+  };
   // Typing Effect
   const words = [
     "Design and deploy RAG pipelines on-prompt...",
@@ -72,6 +86,12 @@ export const Home: React.FC = () => {
 
   return (
     <div>
+      <SEO
+        title="On-Prompt RAG Compiler & Model Fine-Tuning"
+        description="Design and deploy complete RAG pipelines, fine-tune LLMs, and orchestrate autonomous agent networks using natural language prompts."
+        path="/"
+        schema={homepageSchema}
+      />
       {/* 1. Hero Section */}
       <section style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', paddingTop: '100px', position: 'relative', overflow: 'hidden' }}>
         <HeroScene3D />

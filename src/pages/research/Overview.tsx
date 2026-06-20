@@ -4,6 +4,7 @@ import { BookOpen, Calendar, ArrowRight } from 'lucide-react';
 import { RESEARCH_ARTICLES } from '../../data/researchData';
 import { useQuery } from 'convex/react';
 import { api } from '../../../convex/_generated/api';
+import { SEO } from '../../components/SEO';
 
 export const Overview: React.FC = () => {
   const dbArticles = useQuery(api.research.get);
@@ -11,6 +12,12 @@ export const Overview: React.FC = () => {
 
   return (
     <div className="page-container-padding">
+      <SEO
+        title="Research Publications & Tech Reports"
+        description="Explore open-standard technical papers on multi-agent consensus, prompt-directed DPO, and on-prompt dynamic RAG compilation published by Zyntral Labs."
+        path="/research"
+        keywords={['AI Research', 'technical reports', 'RAG compile papers', 'agentic design']}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '900px' }}>
         
         {/* Header */}
