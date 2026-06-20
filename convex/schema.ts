@@ -34,7 +34,7 @@ export default defineSchema({
     desc: v.string(),
     date: v.string(),
     path: v.string(),
-    content: v.string(),
+    content: v.optional(v.string()),
   }),
   founder_profile: defineTable({
     name: v.string(),

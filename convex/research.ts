@@ -29,7 +29,7 @@ export const seed = mutation({
         desc: v.string(),
         date: v.string(),
         path: v.string(),
-        content: v.string(),
+        content: v.optional(v.string()),
       })
     ),
   },
@@ -50,7 +50,7 @@ export const add = mutation({
     desc: v.string(),
     date: v.string(),
     path: v.string(),
-    content: v.string(),
+    content: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const id = await ctx.db.insert("research", args);
@@ -66,7 +66,7 @@ export const update = mutation({
     desc: v.string(),
     date: v.string(),
     path: v.string(),
-    content: v.string(),
+    content: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     await ctx.db.patch(args.id, {

@@ -10,7 +10,14 @@ export const ResearchPaperDynamic: React.FC = () => {
   const dbArticle = useQuery(api.research.getBySlug, slug ? { slug } : "skip");
   const loading = dbArticle === undefined;
 
-  let article = dbArticle;
+  let article: {
+    category: string;
+    title: string;
+    desc: string;
+    date: string;
+    path: string;
+    content?: string;
+  } | null | undefined = dbArticle;
   if (!loading && !dbArticle && slug) {
     // Search fallback static data
     article = RESEARCH_ARTICLES.find(a => a.path.replace('/research/', '') === slug) || null;
