@@ -39,13 +39,17 @@ async function generateSitemap() {
   let dynamicRoutes = [];
 
   try {
-    // Fetch live research papers from Convex HTTP API endpoint
-    const response = await fetch(`${CONVEX_URL}/api/1/run/research/get`, {
+    // Fetch live research papers from Convex HTTP REST query endpoint
+    const response = await fetch(`${CONVEX_URL}/api/query`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({})
+      body: JSON.stringify({
+        path: 'research:get',
+        args: {},
+        format: 'json'
+      })
     });
 
     if (response.ok) {
