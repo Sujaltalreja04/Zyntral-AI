@@ -1,0 +1,42 @@
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
+
+function createWindow() {
+  const win = new BrowserWindow({
+    width: 1366,
+    height: 800,
+    webPreferences: {
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.cjs')
+    },
+    icon: path.join(__dirname, '../public/favicon.ico'),
+    backgroundColor: '#020205',
+    title: 'Zyntral AI Developer Suite',
+    autoHideMenuBar: true
+  });
+
+  const isDev = process.env.ELECTRON_DEV === 'true';
+
+  if (isDev) {
+    win.loadURL('http://localhost:5173');
+  } else {
+    win.loadURL('https://www.zyntral.dev/');
+  }
+}
+
+app.whenReady().then(() => {
+  createWindow();
+
+  app.on('activate', () => {
+    if (BrowserWindow.getAllWindows().length === 0) {
+      createWindow();
+    }
+  });
+});
+
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
+    app.quit();
+  }
+});

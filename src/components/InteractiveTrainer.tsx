@@ -106,7 +106,7 @@ export const InteractiveTrainer: React.FC = () => {
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '30px', position: 'relative', zIndex: 2 }}>
+      <div className="interactive-trainer-grid" style={{ gap: '30px', position: 'relative', zIndex: 2 }}>
         {/* Left Side: Parameters Setup */}
         <div style={{ background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)', padding: '25px', borderRadius: '15px' }}>
           {status === 'idle' ? (
@@ -166,7 +166,7 @@ export const InteractiveTrainer: React.FC = () => {
                 </div>
               </div>
 
-              <button type="submit" className="btn-primary" style={{ background: 'linear-gradient(95deg, #ffffff 0%, #9ca3af 100%)', alignSelf: 'stretch', justifyContent: 'center' }}>
+              <button type="submit" className="btn-primary" style={{ background: 'linear-gradient(135deg, #22c55e 0%, #15803d 100%)', color: '#ffffff', alignSelf: 'stretch', justifyContent: 'center' }}>
                 <Play size={16} fill="currentColor" />
                 Initialize Training Loop
               </button>
@@ -174,7 +174,7 @@ export const InteractiveTrainer: React.FC = () => {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <Cpu size={20} className={status === 'training' ? 'spin-anim' : ''} style={{ color: status === 'completed' ? 'var(--green)' : '#d1d5db' }} />
+                <Cpu size={20} className={status === 'training' ? 'spin-anim' : ''} style={{ color: status === 'completed' ? 'var(--green)' : '#22c55e' }} />
                 <span style={{ fontWeight: 600, fontSize: '0.95rem' }}>
                   {status === 'training' ? `Training: Epoch ${currentEpoch}/3` : 'Model Merged & Saved!'}
                 </span>
@@ -184,7 +184,7 @@ export const InteractiveTrainer: React.FC = () => {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
                 <div style={{ padding: '12px', background: 'rgba(255,255,255,0.02)', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
                   <span style={{ fontStyle: 'normal', fontSize: '0.75rem', color: 'var(--muted-color)' }}>Training Loss</span>
-                  <div style={{ fontSize: '1.2rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#e5e7eb', marginTop: '4px' }}>
+                  <div style={{ fontSize: '1.2rem', fontFamily: 'monospace', fontWeight: 'bold', color: '#22c55e', marginTop: '4px' }}>
                     {currentLoss.toFixed(3)}
                   </div>
                 </div>
@@ -205,7 +205,7 @@ export const InteractiveTrainer: React.FC = () => {
                       <span>{vram}%</span>
                     </div>
                     <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '4px', overflow: 'hidden', marginTop: '4px' }}>
-                      <div style={{ height: '100%', width: `${vram}%`, background: '#9ca3af' }}></div>
+                      <div style={{ height: '100%', width: `${vram}%`, background: '#22c55e' }}></div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.75rem', color: 'var(--muted-color)' }}>
@@ -264,7 +264,7 @@ export const InteractiveTrainer: React.FC = () => {
                       style={{ 
                         flex: 1, 
                         height: `${Math.min(100, Math.max(5, percentHeight))}%`, 
-                        background: 'linear-gradient(to top, rgba(255, 255, 255, 0.5), rgba(156, 163, 175, 0.5))',
+                        background: 'linear-gradient(to top, rgba(34, 197, 94, 0.2), rgba(34, 197, 94, 0.8))',
                         borderRadius: '2px 2px 0 0',
                         position: 'relative',
                         transition: 'height 0.3s ease'

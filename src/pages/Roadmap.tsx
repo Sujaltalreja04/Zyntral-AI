@@ -20,60 +20,82 @@ export const Roadmap: React.FC = () => {
   };
 
   return (
-    <div className="page-container-padding">
+    <div style={{
+      backgroundColor: '#020204',
+      backgroundImage: "radial-gradient(circle at 50% 0%, rgba(34, 197, 94, 0.08) 0%, rgba(2, 2, 4, 0.98) 70%)",
+      minHeight: '100vh',
+      paddingTop: '110px',
+      paddingBottom: '40px',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      position: 'relative'
+    }}>
       <SEO
         title="Product Roadmap & Launch Timeline"
         description="Follow the Zyntral AI compiler and edge node development phases, release updates, and planned launch milestones."
         path="/roadmap"
         keywords={['Zyntral roadmap', 'AI roadmap', 'release timeline', 'product phases']}
       />
-      <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '750px' }}>
+      
+      {/* Floating Roadmap Container */}
+      <div className="roadmap-container" style={{
+        width: '94%',
+        maxWidth: '850px',
+        background: 'rgba(15, 15, 15, 0.7)',
+        backdropFilter: 'blur(20px)',
+        border: '1px solid rgba(255, 255, 255, 0.08)',
+        borderRadius: '24px',
+        boxShadow: '0 30px 100px rgba(0, 0, 0, 0.75)',
+        color: '#f8fafc',
+        fontFamily: "'Inter', sans-serif"
+      }}>
         
         {/* Header */}
-        <div className="section-header">
-          <span className="badge badge-cyan" style={{ marginBottom: '10px' }}>Launch Timeline</span>
-          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '15px' }}>
-            Zyntral <span className="gradient-text">Roadmap</span>
+        <div className="section-header" style={{ marginBottom: '40px', textAlign: 'center' }}>
+          <span className="badge badge-cyan" style={{ marginBottom: '10px', background: 'rgba(255,255,255,0.04)', color: '#8a99ad', border: '1px solid rgba(255,255,255,0.08)' }}>Launch Timeline</span>
+          <h1 style={{ fontSize: '2.5rem', fontWeight: 800, marginBottom: '15px', color: '#ffffff' }}>
+            Zyntral <span style={{ background: 'linear-gradient(135deg, #ffffff 0%, #3b82f6 100%)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Roadmap</span>
           </h1>
-          <p style={{ color: 'var(--muted-color)', fontSize: '1.05rem', lineHeight: '1.8' }}>
+          <p style={{ color: '#8a99ad', fontSize: '1.05rem', lineHeight: '1.7', maxWidth: '650px', margin: '0 auto' }}>
             Follow our development milestones as we transition from research prototypes to a globally distributed compute marketplace.
           </p>
         </div>
 
         {/* Timeline */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '30px', position: 'relative', paddingLeft: '20px' }}>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '35px', position: 'relative', paddingLeft: '24px' }}>
           {/* Vertical line indicator */}
-          <div style={{ position: 'absolute', left: '0', top: '10px', bottom: '10px', width: '2px', background: 'linear-gradient(to bottom, var(--green) 30%, #60a5fa 50%, #a855f7 70%, rgba(255,255,255,0.05))' }}></div>
+          <div style={{ position: 'absolute', left: '0', top: '10px', bottom: '10px', width: '2px', background: 'linear-gradient(to bottom, #10b981 30%, #3b82f6 50%, #8b5cf6 70%, #cbd5e1 100%)' }}></div>
 
           {steps.map((step, idx) => {
             const Icon = getIcon(step);
             return (
-              <div key={idx} className="glass-card" style={{ padding: '30px', position: 'relative' }}>
+              <div key={idx} className="glass-card" style={{ padding: '24px', background: 'rgba(255, 255, 255, 0.015)', border: '1px solid rgba(255, 255, 255, 0.05)', transform: 'none', boxShadow: 'none', position: 'relative', borderRadius: '12px' }}>
                 {/* Timeline dot connector */}
                 <div style={{
                   position: 'absolute',
-                  left: '-26px',
-                  top: '40px',
+                  left: '-30px',
+                  top: '32px',
                   width: '10px',
                   height: '10px',
                   borderRadius: '50%',
                   background: step.statusColor,
-                  boxShadow: `0 0 10px ${step.statusColor}`,
-                  border: '2px solid var(--bg-color)'
+                  border: '2px solid #020204'
                 }}></div>
 
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '15px' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '10px', marginBottom: '12px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div className="card-icon-wrapper" style={{ color: step.statusColor }}>
-                      <Icon size={18} />
+                    <div className="card-icon-wrapper" style={{ color: step.statusColor, background: 'rgba(255, 255, 255, 0.04)', border: '1px solid rgba(255, 255, 255, 0.1)', width: '40px', height: '40px', borderRadius: '8px' }}>
+                      <Icon size={16} />
                     </div>
-                    <h3 style={{ fontSize: '1.25rem', color: '#fff' }}>{step.phase}</h3>
+                    <h3 style={{ fontSize: '1.15rem', color: '#ffffff', fontWeight: 700 }}>{step.phase}</h3>
                   </div>
-                  <span className="badge" style={{ background: step.badgeBg, color: step.statusColor, border: `1px solid ${step.statusColor}25`, fontSize: '0.7rem' }}>
+                  <span className="badge" style={{ background: 'rgba(255, 255, 255, 0.04)', color: step.statusColor, border: `1px solid ${step.statusColor}25`, fontSize: '0.7rem', textTransform: 'uppercase' }}>
                     {step.status}
                   </span>
                 </div>
-                <p style={{ color: 'var(--muted-color)', fontSize: '0.95rem', lineHeight: '1.7' }}>
+                
+                <p style={{ color: '#cbd5e1', fontSize: '0.88rem', lineHeight: '1.7', paddingLeft: '2px' }}>
                   {step.desc}
                 </p>
               </div>
@@ -82,6 +104,18 @@ export const Roadmap: React.FC = () => {
         </div>
 
       </div>
+
+      <style>{`
+        .roadmap-container {
+          padding: 50px 40px;
+        }
+
+        @media (max-width: 768px) {
+          .roadmap-container {
+            padding: 30px 16px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 };

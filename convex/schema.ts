@@ -47,4 +47,17 @@ export default defineSchema({
     key: v.string(),
     value: v.string(),
   }).index("by_key", ["key"]),
+  pipelines: defineTable({
+    name: v.string(),
+    description: v.string(),
+    provider: v.string(), // 'Pinecone' | 'ChromaDB' | 'Qdrant' | 'pgvector'
+    model: v.string(),    // e.g., 'Llama-3-8B', 'Mistral-7B', 'GPT-4o'
+    chunkSize: v.number(),
+    chunkOverlap: v.number(),
+    systemPrompt: v.string(),
+    createdAt: v.string(),
+    appType: v.optional(v.string()),    // 'rag', 'website', 'training'
+    scaleLimit: v.optional(v.string()), // e.g., '50,000 Users'
+    cloudTarget: v.optional(v.string()) // e.g., 'AWS Fargate'
+  }),
 });

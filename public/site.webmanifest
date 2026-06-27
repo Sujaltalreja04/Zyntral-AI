@@ -1,16 +1,19 @@
 {
-  "name": "Zyntral AI Platform",
+  "name": "Zyntral AI",
   "short_name": "Zyntral",
-  "description": "On-Prompt RAG Compiler and autonomous agent network orchestration platform.",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#020205",
-  "theme_color": "#020205",
   "icons": [
     {
-      "src": "/favicon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml"
+      "src": "/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
     }
-  ]
+  ],
+  "theme_color": "#020205",
+  "background_color": "#020205",
+  "display": "standalone"
 }

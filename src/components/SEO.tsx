@@ -18,10 +18,14 @@ const DEFAULT_KEYWORDS = [
   'Sujal zyntral',
   'Talreja',
   'Zyntral AI',
+  'Zyntral Artificial Intelligence',
   'RAG Compiler',
   'On-Prompt Compiler',
   'Autonomous Agents',
-  'LLM Fine-tuning'
+  'LLM Fine-tuning',
+  'Rag builder',
+  'Website generator',
+  'production ready app builder'
 ];
 
 export const SEO: React.FC<SEOProps> = ({

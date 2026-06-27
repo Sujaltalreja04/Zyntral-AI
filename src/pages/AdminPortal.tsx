@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Server, Users, Terminal, LogOut, Database, Plus, Trash2, 
   Edit2, Save, X, ChevronUp, ChevronDown, ChevronRight, Mail, Settings, 
-  User, Download, Send, AlertTriangle, RefreshCw, Eye, EyeOff
+  User, Download, Send, AlertTriangle, RefreshCw, Eye, EyeOff, Cpu
 } from 'lucide-react';
 import logoImg from '../assets/Zyntral LOGO REAL.jpg';
 import { ROADMAP_STEPS } from '../data/roadmapData';
@@ -40,7 +40,7 @@ export const AdminPortal: React.FC = () => {
   const [passcode, setPasscode] = useState('');
   const [isUnlocked, setIsUnlocked] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
-  const [adminTab, setAdminTab] = useState<'overview' | 'submissions' | 'contacts' | 'roadmap' | 'research' | 'about' | 'settings' | 'logs'>('overview');
+  const [adminTab, setAdminTab] = useState<'overview' | 'submissions' | 'contacts' | 'roadmap' | 'research' | 'about' | 'settings' | 'logs' | 'pipelines'>('overview');
 
   // Convex Queries
   const waitlist = useQuery(api.waitlist.get) || [];
@@ -50,6 +50,8 @@ export const AdminPortal: React.FC = () => {
   const dbFounder = useQuery(api.about.getFounder);
   const passcodeVal = useQuery(api.settings.getVal, { key: 'passcode' });
   const maintenanceVal = useQuery(api.settings.getVal, { key: 'maintenance' });
+  const pipelines = useQuery(api.pipelines.get) || [];
+  const deletePipeline = useMutation(api.pipelines.remove);
 
   // Convex Mutations
   const updateWaitlistStatus = useMutation(api.waitlist.updateStatus);
@@ -387,8 +389,8 @@ export const AdminPortal: React.FC = () => {
       await addRoadmapStep({
         phase: 'New Phase',
         status: 'Upcoming',
-        statusColor: '#60a5fa',
-        badgeBg: 'rgba(59, 130, 246, 0.12)',
+        statusColor: '#cbd5e1',
+        badgeBg: 'rgba(203, 213, 225, 0.12)',
         desc: 'Milestone details here...',
         icon: 'HelpCircle',
         orderIndex: roadmap.length
@@ -687,6 +689,7 @@ export const AdminPortal: React.FC = () => {
             { id: 'overview', label: 'System Overview', icon: Server },
             { id: 'submissions', label: 'Waitlist Registry', icon: Users, count: waitlist.filter((w: any) => w.status === 'Pending').length },
             { id: 'contacts', label: 'Contact Messages', icon: Mail, count: contactMessages.filter((c: any) => c.status === 'Unread').length },
+            { id: 'pipelines', label: 'Pipeline Registry', icon: Cpu, count: pipelines.length },
             { id: 'roadmap', label: 'Roadmap Stages', icon: ChevronRight },
             { id: 'research', label: 'Research Papers', icon: Database },
             { id: 'about', label: 'Founder Profile', icon: User },
@@ -747,9 +750,9 @@ export const AdminPortal: React.FC = () => {
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '20px', marginBottom: '30px' }}>
               {[
-                { title: 'Pending Waitlist', val: waitlist.filter((w: any) => w.status === 'Pending').length, icon: Users, color: '#f59e0b' },
-                { title: 'Inbox Messages', val: contactMessages.filter((c: any) => c.status === 'Unread').length, icon: Mail, color: '#60a5fa' },
-                { title: 'Research Articles', val: research.length, icon: Database, color: '#d1d5db' },
+                { title: 'Pending Waitlist', val: waitlist.filter((w: any) => w.status === 'Pending').length, icon: Users, color: '#cbd5e1' },
+                { title: 'Inbox Messages', val: contactMessages.filter((c: any) => c.status === 'Unread').length, icon: Mail, color: '#22c55e' },
+                { title: 'Research Articles', val: research.length, icon: Database, color: '#86efac' },
                 { title: 'Maintenance Node', val: maintenanceMode ? 'ACTIVE' : 'OFFLINE', icon: AlertTriangle, color: maintenanceMode ? '#ef4444' : 'var(--green)' }
               ].map((stat, idx) => {
                 const Icon = stat.icon;
@@ -765,6 +768,20 @@ export const AdminPortal: React.FC = () => {
                   </div>
                 );
               })}
+            </div>
+
+            <div className="glass-card" style={{ padding: '25px', marginBottom: '30px' }}>
+              <h3 style={{ fontSize: '1.1rem', marginBottom: '20px' }}>Gateway Traffic Logs (Last 24 hours)</h3>
+              <div style={{ display: 'flex', alignItems: 'flex-end', gap: '6px', height: '120px', paddingLeft: '40px', borderLeft: '1px solid rgba(255,255,255,0.05)', borderBottom: '1px solid rgba(255,255,255,0.05)', position: 'relative' }}>
+                <div style={{ position: 'absolute', left: '8px', top: '0', bottom: '0', display: 'flex', flexDirection: 'column', justifyContent: 'space-between', fontSize: '0.65rem', color: 'rgba(255,255,255,0.2)' }}>
+                  <span>10k req</span>
+                  <span>5k req</span>
+                  <span>0 req</span>
+                </div>
+                {[45, 60, 55, 75, 90, 85, 110, 130, 95, 80, 70, 90, 115, 140, 135, 120, 145, 160, 150, 130, 110, 95, 105, 125].map((h, i) => (
+                  <div key={i} style={{ flex: 1, height: `${(h / 180) * 100}%`, background: 'linear-gradient(to top, rgba(34, 197, 94, 0.1), rgba(34, 197, 94, 0.6))', borderRadius: '2px 2px 0 0' }} title={`Hour ${i}: ${h} requests`} />
+                ))}
+              </div>
             </div>
 
             <div className="glass-card" style={{ padding: '25px', marginBottom: '30px' }}>
@@ -1416,6 +1433,90 @@ export const AdminPortal: React.FC = () => {
           </div>
         )}
 
+        {/* Tab 9: Pipeline Registry Manager */}
+        {adminTab === 'pipelines' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div>
+                <h2 style={{ fontSize: '1.6rem', fontFamily: 'var(--font-display)' }}>Pipeline Registry</h2>
+                <p style={{ color: 'var(--muted-color)', fontSize: '0.85rem', marginTop: '2px' }}>
+                  Inspect, audit, or delete active compiled stacks currently registered in the database.
+                </p>
+              </div>
+            </div>
+
+            <div className="glass-card" style={{ padding: '0px', overflow: 'hidden', background: 'rgba(255,255,255,0.01)', border: '1px solid rgba(255,255,255,0.04)' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="admin-table" style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.85rem' }}>
+                  <thead>
+                    <tr style={{ background: 'rgba(255,255,255,0.02)', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
+                      <th style={{ padding: '15px 20px', color: '#ffffff', fontWeight: 600 }}>Pipeline Stack</th>
+                      <th style={{ padding: '15px 20px', color: '#ffffff', fontWeight: 600 }}>Database</th>
+                      <th style={{ padding: '15px 20px', color: '#ffffff', fontWeight: 600 }}>Model</th>
+                      <th style={{ padding: '15px 20px', color: '#ffffff', fontWeight: 600 }}>App Type</th>
+                      <th style={{ padding: '15px 20px', color: '#ffffff', fontWeight: 600 }}>Capacity Scale</th>
+                      <th style={{ padding: '15px 20px', color: '#ffffff', fontWeight: 600 }}>Deployment Cloud</th>
+                      <th style={{ padding: '15px 20px', color: '#ffffff', fontWeight: 600, textAlign: 'center' }}>Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {pipelines.length === 0 ? (
+                      <tr>
+                        <td colSpan={7} style={{ padding: '30px', textAlign: 'center', color: 'var(--muted-color)', fontFamily: 'monospace' }}>
+                          No compiled pipelines found in database.
+                        </td>
+                      </tr>
+                    ) : (
+                      pipelines.map((pipe: any) => (
+                        <tr key={pipe._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.03)', transition: 'background 0.2s' }} className="table-row-hover">
+                          <td style={{ padding: '15px 20px' }}>
+                            <span style={{ fontWeight: 650, color: '#ffffff', display: 'block' }}>{pipe.name}</span>
+                            <span style={{ fontSize: '0.72rem', color: 'var(--muted-color)', display: 'block', marginTop: '2px', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '240px' }}>
+                              {pipe.description}
+                            </span>
+                          </td>
+                          <td style={{ padding: '15px 20px' }}>
+                            <span className="badge" style={{ background: 'rgba(34, 197, 94, 0.04)', color: '#4ade80', border: '1px solid rgba(34, 197, 94, 0.15)', fontSize: '0.72rem' }}>
+                              {pipe.provider}
+                            </span>
+                          </td>
+                          <td style={{ padding: '15px 20px', fontFamily: 'monospace', color: '#cbd5e1' }}>
+                            {pipe.model}
+                          </td>
+                          <td style={{ padding: '15px 20px', color: '#94a3b8', textTransform: 'capitalize' }}>
+                            {pipe.appType || 'rag'}
+                          </td>
+                          <td style={{ padding: '15px 20px', color: '#cbd5e1' }}>
+                            {pipe.scaleLimit || '10,000 Users'}
+                          </td>
+                          <td style={{ padding: '15px 20px', color: '#94a3b8' }}>
+                            {pipe.cloudTarget || 'AWS Fargate'}
+                          </td>
+                          <td style={{ padding: '15px 20px', textAlign: 'center' }}>
+                            <button 
+                              onClick={async () => {
+                                if (window.confirm(`Delete compiled configuration "${pipe.name}"?`)) {
+                                  try {
+                                    await deletePipeline({ id: pipe._id });
+                                  } catch (err) {
+                                    alert('Failed to delete pipeline.');
+                                  }
+                                }
+                              }}
+                              style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          </td>
+                        </tr>
+                      ))
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       {/* Reply Message Modal */}

@@ -2,121 +2,133 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://www.zyntral.dev</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
+    <loc>https://www.zyntral.dev/workspace</loc>
+    <lastmod>2026-06-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://www.zyntral.dev/platform</loc>
+    <lastmod>2026-06-27</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.80</priority>
+  </url>
+  <url>
     <loc>https://www.zyntral.dev/roadmap</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/waitlist</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/contact</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/platform/overview</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/platform/agent-engine</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/platform/knowledge-engine</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/platform/workflow-engine</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/platform/deployment-engine</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/solutions/enterprise-ai</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/solutions/logistics-intelligence</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/solutions/supply-chain-ai</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/solutions/knowledge-systems</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/solutions/custom-ai-systems</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/research</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/about/vision</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/about/founder</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/about/mission</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/legal/privacy-policy</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
   <url>
     <loc>https://www.zyntral.dev/legal/terms</loc>
-    <lastmod>2026-06-20</lastmod>
+    <lastmod>2026-06-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>

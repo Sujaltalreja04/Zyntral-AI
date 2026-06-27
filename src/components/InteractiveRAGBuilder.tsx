@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useMutation } from 'convex/react';
+import { api } from '../../convex/_generated/api';
 import { Play, Sparkles, CheckCircle, Database, Cpu, Terminal, ArrowRight, RefreshCw } from 'lucide-react';
 
 interface LogLine {
@@ -8,25 +10,28 @@ interface LogLine {
 }
 
 export const InteractiveRAGBuilder: React.FC = () => {
-  const [prompt, setPrompt] = useState('Build a RAG pipeline that ingests product manuals from PDF files, chunks them, stores them in a vector DB, and links Llama-3 to answer customer service requests.');
+  const [prompt, setPrompt] = useState('Build a RAG pipeline that searches standard PDF files, stores them in Pinecone, and links Llama-3 to answer support tickets.');
   const [status, setStatus] = useState<'idle' | 'compiling' | 'success'>('idle');
   const [logs, setLogs] = useState<LogLine[]>([]);
   const [activeStep, setActiveStep] = useState<number>(-1);
   const [currentProgress, setCurrentProgress] = useState(0);
 
+  // Convex Mutation
+  const addPipeline = useMutation(api.pipelines.add);
+
   const mockSteps = [
     { text: 'Parsing user prompt for architecture details...', type: 'plan' as const },
-    { text: 'Detected sources: [PDF Files]. LLM: [Llama-3]. Vector DB: [ChromaDB].', type: 'info' as const },
+    { text: 'Analyzing text constraints and pipeline requirements...', type: 'info' as const },
     { text: 'Configuring document loaders and chunk size (Size: 512, Overlap: 50)...', type: 'process' as const },
-    { text: 'Setting up HuggingFace embedding generator (bge-large-en)...', type: 'process' as const },
-    { text: 'Connecting Vector database: Initializing ChromaDB database clusters...', type: 'process' as const },
+    { text: 'Setting up embedding generator parameters...', type: 'process' as const },
+    { text: 'Connecting vector database cluster...', type: 'process' as const },
     { text: 'Computing embeddings and indexing mock vectors...', type: 'process' as const },
-    { text: 'Configuring Retriever logic with MMR reranking...', type: 'process' as const },
-    { text: 'Linking system instructions to Llama-3-70B model context...', type: 'process' as const },
-    { text: 'Simulating query testing... Retrieval Latency: 28ms. LLM Latency: 1.1s.', type: 'eval' as const },
+    { text: 'Configuring retriever logic with MMR reranking...', type: 'process' as const },
+    { text: 'Linking system instructions to prompt context templates...', type: 'process' as const },
+    { text: 'Simulating query testing... Retrieval Latency: 22ms.', type: 'eval' as const },
     { text: 'Running sanity check tests... 100% tests passed.', type: 'eval' as const },
     { text: 'SUCCESS: RAG Pipeline compiled & deployed!', type: 'success' as const },
-    { text: 'API Live: https://api.zyntral.ai/v1/rag-service-592', type: 'success' as const }
+    { text: 'Pushed configuration to active pipeline catalog.', type: 'success' as const }
   ];
 
   useEffect(() => {
@@ -42,7 +47,7 @@ export const InteractiveRAGBuilder: React.FC = () => {
       }
     ]);
 
-    const interval = setInterval(() => {
+    const interval = setInterval(async () => {
       if (step < mockSteps.length) {
         const item = mockSteps[step];
         setLogs((prev) => [
@@ -66,9 +71,44 @@ export const InteractiveRAGBuilder: React.FC = () => {
         step++;
       } else {
         clearInterval(interval);
+        
+        // Auto-save the parsed pipeline to Convex at the end of compilation!
+        try {
+          const lowerPrompt = prompt.toLowerCase();
+          
+          // Simple heuristics
+          const detectedDB = lowerPrompt.includes('pinecone') ? 'Pinecone' 
+                           : lowerPrompt.includes('qdrant') ? 'Qdrant' 
+                           : lowerPrompt.includes('pgvector') ? 'pgvector' 
+                           : 'ChromaDB';
+          
+          const detectedModel = lowerPrompt.includes('mistral') ? 'Mistral-7B' 
+                              : lowerPrompt.includes('gpt') ? 'GPT-4o' 
+                              : 'Llama-3-8B';
+
+          const namePrefix = lowerPrompt.includes('support') ? 'Support Retriever'
+                           : lowerPrompt.includes('pdf') ? 'PDF Knowledge Base'
+                           : 'Prompt Compiled RAG';
+
+          await addPipeline({
+            name: `${namePrefix} (${detectedDB})`,
+            description: `Auto-compiled from prompt: "${prompt.slice(0, 50)}..."`,
+            provider: detectedDB,
+            model: detectedModel,
+            chunkSize: 512,
+            chunkOverlap: 50,
+            systemPrompt: 'You are a compiled RAG assistant. Answer questions using only retrieved prompt context.',
+            appType: 'rag',
+            scaleLimit: '50,000 Users',
+            cloudTarget: 'AWS Fargate'
+          });
+        } catch (err) {
+          console.error('Failed to auto-save compiled pipeline:', err);
+        }
+
         setStatus('success');
       }
-    }, 1200);
+    }, 800);
 
     return () => clearInterval(interval);
   }, [status]);
@@ -93,21 +133,20 @@ export const InteractiveRAGBuilder: React.FC = () => {
     { id: 2, label: 'Vector Indexer', icon: Cpu },
     { id: 3, label: 'MMR Retriever', icon: Terminal },
     { id: 4, label: 'LLM Generator', icon: ArrowRight },
-    { id: 5, label: 'Production API', icon: CheckCircle }
+    { id: 5, label: 'Catalog Registry', icon: CheckCircle }
   ];
 
   return (
-    <div className="glass-card" style={{ padding: '40px', background: 'rgba(5, 5, 12, 0.5)' }}>
-      <div className="glow-glow"></div>
+    <div className="glass-card" style={{ padding: '30px', background: 'rgba(13, 17, 28, 0.4)' }}>
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px', position: 'relative', zIndex: 2 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '25px' }}>
         <div>
-          <h3 style={{ fontSize: '1.5rem', display: 'flex', alignItems: 'center', gap: '10px', color: '#fff' }}>
-            <Sparkles size={24} style={{ color: '#e5e7eb' }} />
-            Prompt-to-RAG Compiler
+          <h3 style={{ fontSize: '1.3rem', display: 'flex', alignItems: 'center', gap: '10px', color: '#fff' }}>
+            <Sparkles size={20} style={{ color: '#fff' }} />
+            Prompt-to-RAG Compiler Wizard
           </h3>
-          <p style={{ color: 'var(--muted-color)', fontSize: '0.9rem', marginTop: '5px' }}>
-            Enter your requirements to generate an end-to-end LLM retrieval pipeline.
+          <p style={{ color: 'var(--muted-color)', fontSize: '0.85rem', marginTop: '4px' }}>
+            Describe your pipeline features. The compiler will structure, trace, and auto-catalog it.
           </p>
         </div>
         
@@ -115,83 +154,81 @@ export const InteractiveRAGBuilder: React.FC = () => {
           <button 
             onClick={handleReset} 
             className="nav-btn" 
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '8px 18px', fontSize: '0.85rem' }}
+            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 14px', fontSize: '0.8rem' }}
           >
-            <RefreshCw size={14} className={status === 'compiling' ? 'spin-anim' : ''} />
-            Reset Canvas
+            <RefreshCw size={12} className={status === 'compiling' ? 'spin-anim' : ''} />
+            Configure New Prompt
           </button>
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '30px', position: 'relative', zIndex: 2 }}>
-        {/* Left Side: Controls and Logging */}
+      <div className="interactive-rag-grid" style={{ gap: '30px' }}>
+        {/* Left Column: Input / Log stream */}
         <div>
           {status === 'idle' ? (
             <form onSubmit={handleStart} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
               <div className="input-group">
-                <label className="input-label">Natural Language Prompt</label>
+                <label className="input-label">Natural Language Specification</label>
                 <textarea
                   value={prompt}
                   onChange={(e) => setPrompt(e.target.value)}
                   className="input-field"
                   rows={4}
-                  style={{ resize: 'none', fontFamily: 'var(--font-sans)', lineHeight: '1.5' }}
+                  style={{ resize: 'none', lineHeight: '1.5' }}
                 />
               </div>
               <button type="submit" className="btn-primary" style={{ alignSelf: 'flex-start' }}>
-                <Play size={18} fill="currentColor" />
-                Compile RAG System
+                <Play size={16} fill="currentColor" />
+                Compile & Register
               </button>
             </form>
           ) : (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontSize: '0.85rem', fontWeight: 600, color: '#e5e7eb' }}>
-                  {status === 'compiling' ? 'COMPILING ARCHITECTURE...' : 'DEPLOYMENT COMPLETE'}
+                <span style={{ fontSize: '0.8rem', fontWeight: 600, color: '#e5e7eb', letterSpacing: '0.5px' }}>
+                  {status === 'compiling' ? 'COMPILING SPECIFICATION...' : 'COMPILATION SUCCESSFUL'}
                 </span>
-                <span style={{ fontSize: '0.85rem', color: 'var(--muted-color)' }}>{currentProgress}%</span>
+                <span style={{ fontSize: '0.8rem', color: 'var(--muted-color)' }}>{currentProgress}%</span>
               </div>
               <div style={{ width: '100%', height: '4px', background: 'rgba(255,255,255,0.05)', borderRadius: '10px', overflow: 'hidden', marginBottom: '20px' }}>
                 <div 
                   style={{ 
                     height: '100%', 
                     width: `${currentProgress}%`, 
-                    background: 'linear-gradient(90deg, #ffffff, #6b7280)',
+                    background: '#22c55e',
                     transition: 'width 0.4s ease'
                   }} 
                 />
               </div>
 
-              {/* Console Logs */}
-              <div className="rag-builder-widget" style={{ height: '280px', overflowY: 'auto' }}>
+              {/* Terminal Logs */}
+              <div className="rag-builder-widget" style={{ minHeight: '260px', height: '260px', overflowY: 'auto' }}>
                 <div className="terminal-header">
                   <div className="terminal-dots">
                     <span className="terminal-dot red" />
                     <span className="terminal-dot yellow" />
                     <span className="terminal-dot green" />
                   </div>
-                  <span className="terminal-title">compiler-logs.sh</span>
+                  <span className="terminal-title">zyntral-compiler.sh</span>
                 </div>
-                <div className="terminal-body" style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                <div className="terminal-body" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
                   {logs.map((log, idx) => {
-                    let color = '#d1d5db';
-                    if (log.type === 'plan') color = '#e5e7eb';
-                    else if (log.type === 'process') color = '#d1d5db';
-                    else if (log.type === 'eval') color = '#9ca3af';
-                    else if (log.type === 'success') color = '#ffffff';
-                    else if (log.type === 'info') color = '#9ca3af';
+                    let color = '#94a3b8';
+                    if (log.type === 'plan') color = '#f8fafc';
+                    else if (log.type === 'eval') color = '#64748b';
+                    else if (log.type === 'success') color = '#22c55e';
                     
                     return (
-                      <div key={idx} style={{ fontSize: '0.85rem', color }}>
-                        <span style={{ color: 'rgba(255,255,255,0.25)', marginRight: '8px' }}>[{log.timestamp}]</span>
+                      <div key={idx} style={{ fontSize: '0.8rem', color }}>
+                        <span style={{ color: 'rgba(255,255,255,0.15)', marginRight: '8px' }}>[{log.timestamp}]</span>
                         {log.text}
                       </div>
                     );
                   })}
                   {status === 'compiling' && (
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.85rem', color: 'var(--muted-color)' }}>
-                      <span style={{ width: '6px', height: '12px', background: '#d1d5db', animation: 'caret-blink 0.8s infinite', display: 'inline-block' }}></span>
-                      <span>Compiling pipeline...</span>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '0.8rem', color: 'var(--muted-color)' }}>
+                      <span style={{ width: '6px', height: '12px', background: '#22c55e', animation: 'caret-blink 0.8s infinite', display: 'inline-block' }}></span>
+                      <span>Indexing pipeline modules...</span>
                     </div>
                   )}
                 </div>
@@ -200,30 +237,30 @@ export const InteractiveRAGBuilder: React.FC = () => {
           )}
         </div>
 
-        {/* Right Side: Visual Flowchart */}
+        {/* Right Column: Steps diagram */}
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: '15px' }}>
-          <span className="input-label" style={{ marginBottom: '5px' }}>Pipeline Topology</span>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+          <span className="input-label" style={{ marginBottom: '5px' }}>Pipeline Topology Status</span>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
             {flowNodes.map((node, index) => {
               const IconComp = node.icon;
               const isActive = activeStep === node.id;
               const isFinished = activeStep > node.id || status === 'success';
               
-              let styleBorder = 'rgba(255, 255, 255, 0.05)';
-              let styleBg = 'rgba(255, 255, 255, 0.02)';
+              let styleBorder = 'rgba(255, 255, 255, 0.03)';
+              let styleBg = 'rgba(255, 255, 255, 0.01)';
               let iconColor = 'var(--muted-color)';
               let textColor = 'var(--muted-color)';
               
               if (isActive) {
-                styleBorder = 'rgba(255, 255, 255, 0.3)';
-                styleBg = 'rgba(255, 255, 255, 0.06)';
+                styleBorder = 'rgba(34, 197, 94, 0.2)';
+                styleBg = 'rgba(34, 197, 94, 0.02)';
                 iconColor = '#ffffff';
                 textColor = '#ffffff';
               } else if (isFinished) {
-                styleBorder = 'rgba(255, 255, 255, 0.15)';
-                styleBg = 'rgba(255, 255, 255, 0.03)';
-                iconColor = '#d1d5db';
-                textColor = '#e5e7eb';
+                styleBorder = 'rgba(255, 255, 255, 0.08)';
+                styleBg = 'rgba(255, 255, 255, 0.02)';
+                iconColor = '#cbd5e1';
+                textColor = '#cbd5e1';
               }
 
               return (
@@ -233,22 +270,21 @@ export const InteractiveRAGBuilder: React.FC = () => {
                       width: '100%', 
                       display: 'flex', 
                       alignItems: 'center', 
-                      gap: '15px', 
-                      padding: '12px 20px', 
-                      borderRadius: '10px', 
+                      gap: '12px', 
+                      padding: '10px 18px', 
+                      borderRadius: '8px', 
                       border: `1px solid ${styleBorder}`,
                       background: styleBg,
-                      transition: 'all 0.3s ease',
-                      boxShadow: isActive ? '0 0 15px rgba(255, 255, 255, 0.05)' : 'none'
+                      transition: 'all 0.2s ease',
                     }}
                   >
-                    <IconComp size={18} style={{ color: iconColor }} />
-                    <span style={{ fontSize: '0.9rem', fontWeight: 500, color: textColor }}>{node.label}</span>
-                    {isFinished && <CheckCircle size={14} style={{ marginLeft: 'auto', color: '#d1d5db' }} />}
-                    {isActive && <div className="pulse-dot" style={{ marginLeft: 'auto', width: '8px', height: '8px', borderRadius: '50%', background: '#ffffff' }} />}
+                    <IconComp size={16} style={{ color: iconColor }} />
+                    <span style={{ fontSize: '0.85rem', fontWeight: 500, color: textColor }}>{node.label}</span>
+                    {isFinished && <CheckCircle size={12} style={{ marginLeft: 'auto', color: 'var(--green)' }} />}
+                    {isActive && <div className="pulse-dot" style={{ marginLeft: 'auto', width: '6px', height: '6px', borderRadius: '50%', background: '#22c55e' }} />}
                   </div>
                   {index < flowNodes.length - 1 && (
-                    <div style={{ width: '1px', height: '12px', background: isFinished ? '#6b7280' : 'rgba(255, 255, 255, 0.05)', margin: '2px 0' }}></div>
+                    <div style={{ width: '1px', height: '10px', background: isFinished ? 'rgba(255,255,255,0.1)' : 'rgba(255, 255, 255, 0.03)', margin: '1px 0' }}></div>
                   )}
                 </div>
               );

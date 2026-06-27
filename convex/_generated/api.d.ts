@@ -10,6 +10,7 @@
 
 import type * as about from "../about.js";
 import type * as contacts from "../contacts.js";
+import type * as pipelines from "../pipelines.js";
 import type * as research from "../research.js";
 import type * as roadmap from "../roadmap.js";
 import type * as settings from "../settings.js";
@@ -24,6 +25,7 @@ import type {
 declare const fullApi: ApiFromModules<{
   about: typeof about;
   contacts: typeof contacts;
+  pipelines: typeof pipelines;
   research: typeof research;
   roadmap: typeof roadmap;
   settings: typeof settings;

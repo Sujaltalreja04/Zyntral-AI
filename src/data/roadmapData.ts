@@ -30,24 +30,24 @@ export const ROADMAP_STEPS: RoadmapStep[] = [
   {
     phase: 'Phase 3: Prototype Phase',
     status: 'In Progress',
-    statusColor: '#60a5fa',
-    badgeBg: 'rgba(59, 130, 246, 0.12)',
+    statusColor: 'var(--green)',
+    badgeBg: 'rgba(34, 197, 94, 0.12)',
     desc: 'Developing sandbox compiler environments and deploying mock multi-agent orchestrator grids. Enabling public Pinecone/Chroma connections.',
     icon: Cpu
   },
   {
     phase: 'Phase 4: Private Beta',
     status: 'Upcoming',
-    statusColor: '#a855f7',
-    badgeBg: 'rgba(168, 85, 247, 0.12)',
+    statusColor: '#cbd5e1',
+    badgeBg: 'rgba(203, 213, 225, 0.12)',
     desc: 'Provisioning early developer keys to waitlist applicants. Commencing high-throughput load tests on local GPU edge server nodes.',
     icon: ShieldAlert
   },
   {
     phase: 'Phase 5: Public Launch',
     status: 'Future / Launching 2027',
-    statusColor: 'var(--muted-color)',
-    badgeBg: 'rgba(255, 255, 255, 0.05)',
+    statusColor: '#a1a1aa',
+    badgeBg: 'rgba(161, 161, 170, 0.12)',
     desc: 'Opening the Zyntral decentralized GPU compute marketplace, hosting regional agent workflows and custom LoRA fine-tunes globally.',
     icon: Globe
   }
