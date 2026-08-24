@@ -18,6 +18,7 @@ const Terms = React.lazy(() => import('./pages/legal/Terms').then(m => ({ defaul
 
 import logoImg from './assets/Zyntral LOGO REAL.jpg';
 import { Menu, X } from 'lucide-react';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // ScrollToTop component to reset viewport on route changes
 const ScrollToTop: React.FC = () => {
@@ -276,8 +277,9 @@ export const App: React.FC = () => {
   const RouterComponent = isElectron ? HashRouter : BrowserRouter;
 
   return (
-    <RouterComponent>
-      <ScrollToTop />
+    <ErrorBoundary>
+      <RouterComponent>
+        <ScrollToTop />
 
       {maintenance && (
         <div style={{
@@ -303,12 +305,12 @@ export const App: React.FC = () => {
           ⚠️ SYSTEM NOTICE: Enterprise Node in Maintenance Mode. Simulated network latency may occur.
         </div>
       )}
-      
-      {/* Navigation */}
-      <Navigation />
 
-      {/* Page Routing */}
-      <div style={{ paddingTop: maintenance ? '40px' : '0px', transition: 'padding-top 0.3s ease' }}>
+        {/* Navigation */}
+        <Navigation />
+
+        {/* Page Routing */}
+        <div style={{ paddingTop: maintenance ? '40px' : '0px', transition: 'padding-top 0.3s ease' }}>
         <React.Suspense fallback={
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '80vh', color: 'var(--muted-color)', fontFamily: 'monospace' }}>
             <span>Loading Workspace Layout...</span>
@@ -329,9 +331,10 @@ export const App: React.FC = () => {
         </React.Suspense>
       </div>
 
-      {/* Footer */}
-      <Footer />
-    </RouterComponent>
+        {/* Footer */}
+        <Footer />
+      </RouterComponent>
+    </ErrorBoundary>
   );
 };
 

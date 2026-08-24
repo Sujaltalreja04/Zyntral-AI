@@ -12,7 +12,7 @@ import { ConvexError } from 'convex/values';
 import { api } from '../../convex/_generated/api';
 
 interface ContactMessage {
-  _id: any;
+  _id: string;
   name: string;
   email: string;
   subject: string;
@@ -100,8 +100,8 @@ export const AdminPortal: React.FC = () => {
   const [contactFilter, setContactFilter] = useState<'All' | 'Unread' | 'Read' | 'Replied'>('All');
 
   // Editing States
-  const [editingRoadmapId, setEditingRoadmapId] = useState<any>(null);
-  const [editingResearchId, setEditingResearchId] = useState<any>(null);
+  const [editingRoadmapId, setEditingRoadmapId] = useState<string | null>(null);
+  const [editingResearchId, setEditingResearchId] = useState<string | null>(null);
 
   // Roadmap Form Fields
   const [rmPhase, setRmPhase] = useState('');
@@ -359,7 +359,7 @@ export const AdminPortal: React.FC = () => {
     if (!replyMessage || !replyBody.trim()) return;
 
     try {
-      await updateContactStatus({ token: adminToken || '', id: replyMessage._id, status: 'Replied' });
+      await updateContactStatus({ token: adminToken || '', id: replyMessage._id as any, status: 'Replied' });
       // Append to system logs
       setTerminalLines(prev => [
         ...prev,

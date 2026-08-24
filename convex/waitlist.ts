@@ -1,6 +1,23 @@
 import { query, mutation } from "./_generated/server";
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { requireAdmin } from "./adminAuth";
+
+const RATE_LIMIT_WINDOW_MS = 60000; // 1 minute
+const MAX_SUBMISSIONS_PER_WINDOW = 3;
+
+async function checkRateLimit(ctx: any): Promise<void> {
+  const now = Date.now();
+  const windowStart = now - RATE_LIMIT_WINDOW_MS;
+
+  const recent = await ctx.db
+    .query("waitlist")
+    .filter((q: any) => q.gte(q.field("_creationTime"), windowStart))
+    .collect();
+
+  if (recent.length >= MAX_SUBMISSIONS_PER_WINDOW) {
+    throw new ConvexError("Too many submissions. Please try again later.");
+  }
+}
 
 export const get = query({
   args: {},
@@ -17,6 +34,7 @@ export const add = mutation({
     useCase: v.string(),
   },
   handler: async (ctx, args) => {
+    await checkRateLimit(ctx);
     const id = await ctx.db.insert("waitlist", {
       name: args.name,
       email: args.email,
