@@ -3,8 +3,6 @@ import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
 import { requireAdmin, newSessionExpiry } from "./adminAuth";
 
-const DEFAULT_PASSCODE = "zyntral2026";
-
 export const getVal = query({
   args: { key: v.string() },
   handler: async (ctx, args) => {
@@ -28,9 +26,8 @@ export const login = mutation({
       .query("settings")
       .withIndex("by_key", (q) => q.eq("key", "passcode"))
       .first();
-    const currentPasscode = match ? match.value : DEFAULT_PASSCODE;
 
-    if (args.passcode !== currentPasscode) {
+    if (!match || args.passcode !== match.value) {
       throw new ConvexError("Invalid passcode");
     }
 
