@@ -4,6 +4,7 @@ import './index.css'
 import App from './App.tsx'
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { HelmetProvider } from 'react-helmet-async';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Retrieve the Convex URL from the environment with a mock fallback to prevent runtime crashes prior to local link setup
 const convexUrl = import.meta.env.VITE_CONVEX_URL || "https://mock-deployment.convex.cloud";
@@ -11,10 +12,12 @@ const convex = new ConvexReactClient(convexUrl);
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <HelmetProvider>
-      <ConvexProvider client={convex}>
-        <App />
-      </ConvexProvider>
-    </HelmetProvider>
+    <ErrorBoundary>
+      <HelmetProvider>
+        <ConvexProvider client={convex}>
+          <App />
+        </ConvexProvider>
+      </HelmetProvider>
+    </ErrorBoundary>
   </StrictMode>,
 )
