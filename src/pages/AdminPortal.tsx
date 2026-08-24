@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { 
   Server, Users, Terminal, LogOut, Database, Plus, Trash2, 
   Edit2, Save, X, ChevronUp, ChevronDown, ChevronRight, Mail, Settings, 
-  User, Download, Send, AlertTriangle, RefreshCw, Eye, EyeOff, Cpu
+  User, Download, Send, AlertTriangle, RefreshCw, Eye, EyeOff, Cpu, Bot
 } from 'lucide-react';
 import logoImg from '../assets/Zyntral LOGO REAL.jpg';
 import { ROADMAP_STEPS } from '../data/roadmapData';
 import { RESEARCH_ARTICLES } from '../data/researchData';
 import { useQuery, useMutation } from 'convex/react';
+import { ConvexError } from 'convex/values';
 import { api } from '../../convex/_generated/api';
 
 interface ContactMessage {
@@ -36,11 +37,18 @@ const DEFAULT_FOUNDER: FounderProfile = {
   mission: 'Our mission is to build robust, open-standard compilers and runtime nodes. We focus on optimizing edge GPU scheduling, parameter efficient tuning configurations (LoRA, DPO), and consensus-based state protocols to deliver high-speed, secure AI operations.'
 };
 
+function getErrorMessage(err: unknown, fallback: string): string {
+  if (err instanceof ConvexError && typeof err.data === 'string') return err.data;
+  if (err instanceof Error) return err.message;
+  return fallback;
+}
+
 export const AdminPortal: React.FC = () => {
   const [passcode, setPasscode] = useState('');
   const [isUnlocked, setIsUnlocked] = useState(false);
+  const [adminToken, setAdminToken] = useState<string | null>(() => sessionStorage.getItem('zyntral_admin_token'));
   const [errorMsg, setErrorMsg] = useState('');
-  const [adminTab, setAdminTab] = useState<'overview' | 'submissions' | 'contacts' | 'roadmap' | 'research' | 'about' | 'settings' | 'logs' | 'pipelines'>('overview');
+  const [adminTab, setAdminTab] = useState<'overview' | 'submissions' | 'contacts' | 'roadmap' | 'research' | 'about' | 'settings' | 'logs' | 'pipelines' | 'agents'>('overview');
 
   // Convex Queries
   const waitlist = useQuery(api.waitlist.get) || [];
@@ -48,10 +56,14 @@ export const AdminPortal: React.FC = () => {
   const roadmap = useQuery(api.roadmap.get) || [];
   const research = useQuery(api.research.get) || [];
   const dbFounder = useQuery(api.about.getFounder);
-  const passcodeVal = useQuery(api.settings.getVal, { key: 'passcode' });
   const maintenanceVal = useQuery(api.settings.getVal, { key: 'maintenance' });
+  const sessionValid = useQuery(api.settings.validateSession, adminToken ? { token: adminToken } : 'skip');
   const pipelines = useQuery(api.pipelines.get) || [];
   const deletePipeline = useMutation(api.pipelines.remove);
+
+  const agents = useQuery(api.agents.get) || [];
+  const deleteAgent = useMutation(api.agents.remove);
+  const addAgent = useMutation(api.agents.add);
 
   // Convex Mutations
   const updateWaitlistStatus = useMutation(api.waitlist.updateStatus);
@@ -77,6 +89,8 @@ export const AdminPortal: React.FC = () => {
   
   const setSettingVal = useMutation(api.settings.setVal);
   const resetAllDb = useMutation(api.settings.resetAll);
+  const loginMutation = useMutation(api.settings.login);
+  const logoutMutation = useMutation(api.settings.logout);
 
   // Search & Filter States
   const [waitlistSearch, setWaitlistSearch] = useState('');
@@ -132,12 +146,20 @@ export const AdminPortal: React.FC = () => {
   ]);
   const terminalEndRef = useRef<HTMLDivElement>(null);
 
-  // Sync session auth
+  // Sync session auth: a stored token only unlocks the dashboard once the
+  // server confirms it is still a live, unexpired admin session.
   useEffect(() => {
-    if (sessionStorage.getItem('zyntral_admin_authed') === 'true') {
+    if (sessionValid === undefined) return; // still loading
+    if (sessionValid) {
       setIsUnlocked(true);
+      sessionStorage.setItem('zyntral_admin_authed', 'true');
+    } else if (adminToken !== null) {
+      setAdminToken(null);
+      setIsUnlocked(false);
+      sessionStorage.removeItem('zyntral_admin_token');
+      sessionStorage.removeItem('zyntral_admin_authed');
     }
-  }, []);
+  }, [sessionValid, adminToken]);
 
   // Database auto-seeding on mount if Convex collections are empty
   useEffect(() => {
@@ -168,12 +190,6 @@ export const AdminPortal: React.FC = () => {
     }
   }, [maintenanceVal]);
 
-  useEffect(() => {
-    if (passcodeVal) {
-      setNewPasscode(passcodeVal);
-    }
-  }, [passcodeVal]);
-
   // Sync founder biography overrides
   useEffect(() => {
     if (dbFounder) {
@@ -198,21 +214,28 @@ export const AdminPortal: React.FC = () => {
     }
   }, [terminalLines]);
 
-  const handleUnlock = (e: React.FormEvent) => {
+  const handleUnlock = async (e: React.FormEvent) => {
     e.preventDefault();
-    const currentPasscode = passcodeVal || 'zyntral2026';
-    if (passcode === currentPasscode) {
+    try {
+      const token = await loginMutation({ passcode });
+      setAdminToken(token);
       setIsUnlocked(true);
       setErrorMsg('');
+      sessionStorage.setItem('zyntral_admin_token', token);
       sessionStorage.setItem('zyntral_admin_authed', 'true');
-    } else {
+    } catch (err) {
       setErrorMsg('Access Denied. Cryptographic signature signature mismatch.');
       setPasscode('');
     }
   };
 
   const handleLogout = () => {
+    if (adminToken) {
+      logoutMutation({ token: adminToken }).catch(err => console.error('Logout error:', err));
+    }
+    setAdminToken(null);
     setIsUnlocked(false);
+    sessionStorage.removeItem('zyntral_admin_token');
     sessionStorage.removeItem('zyntral_admin_authed');
   };
 
@@ -220,10 +243,11 @@ export const AdminPortal: React.FC = () => {
   const handleClearWaitlist = async () => {
     if (window.confirm('Are you sure you want to purge all waitlist submissions in Convex?')) {
       try {
-        await purgeWaitlist();
+        await purgeWaitlist({ token: adminToken || '' });
         setTerminalLines(prev => [...prev, `[${new Date().toLocaleTimeString()}] WAITLIST: Purged all entries`]);
       } catch (err) {
-        alert('Failed to purge waitlist');
+        console.error('Purge waitlist error:', err);
+        alert(getErrorMessage(err, 'Failed to purge waitlist'));
       }
     }
   };
@@ -251,16 +275,17 @@ export const AdminPortal: React.FC = () => {
 
   const handleDeleteWaitlist = async (id: any) => {
     try {
-      await deleteWaitlistEntry({ id });
+      await deleteWaitlistEntry({ token: adminToken || '', id });
     } catch (err) {
-      alert('Failed to delete entry');
+      console.error('Delete waitlist entry error:', err);
+      alert(getErrorMessage(err, 'Failed to delete entry'));
     }
   };
 
   const handleApproveWaitlist = async (id: any) => {
     const apiKey = `zyntral_live_ak_${Math.random().toString(36).substring(2, 10)}${Math.random().toString(36).substring(2, 10)}`;
     try {
-      await updateWaitlistStatus({ id, status: 'Approved', apiKey });
+      await updateWaitlistStatus({ token: adminToken || '', id, status: 'Approved', apiKey });
       const item = waitlist.find((w: any) => w._id === id);
       if (item) {
         setTerminalLines(prev => [
@@ -269,15 +294,17 @@ export const AdminPortal: React.FC = () => {
         ]);
       }
     } catch (err) {
-      alert('Failed to approve entry');
+      console.error('Approve waitlist entry error:', err);
+      alert(getErrorMessage(err, 'Failed to approve entry'));
     }
   };
 
   const handleRejectWaitlist = async (id: any) => {
     try {
-      await updateWaitlistStatus({ id, status: 'Rejected', apiKey: null });
+      await updateWaitlistStatus({ token: adminToken || '', id, status: 'Rejected', apiKey: null });
     } catch (err) {
-      alert('Failed to reject entry');
+      console.error('Reject waitlist entry error:', err);
+      alert(getErrorMessage(err, 'Failed to reject entry'));
     }
   };
 
@@ -299,18 +326,20 @@ export const AdminPortal: React.FC = () => {
   // Contacts Inbox Operations
   const handleMarkContactStatus = async (id: any, status: 'Unread' | 'Read') => {
     try {
-      await updateContactStatus({ id, status });
+      await updateContactStatus({ token: adminToken || '', id, status });
     } catch (err) {
-      alert('Failed to update status');
+      console.error('Update contact status error:', err);
+      alert(getErrorMessage(err, 'Failed to update status'));
     }
   };
 
   const handleDeleteContact = async (id: any) => {
     if (window.confirm('Delete this message entry in Convex?')) {
       try {
-        await deleteContactMessage({ id });
+        await deleteContactMessage({ token: adminToken || '', id });
       } catch (err) {
-        alert('Failed to delete contact');
+        console.error('Delete contact error:', err);
+        alert(getErrorMessage(err, 'Failed to delete contact'));
       }
     }
   };
@@ -330,7 +359,7 @@ export const AdminPortal: React.FC = () => {
     if (!replyMessage || !replyBody.trim()) return;
 
     try {
-      await updateContactStatus({ id: replyMessage._id, status: 'Replied' });
+      await updateContactStatus({ token: adminToken || '', id: replyMessage._id, status: 'Replied' });
       // Append to system logs
       setTerminalLines(prev => [
         ...prev,
@@ -340,7 +369,8 @@ export const AdminPortal: React.FC = () => {
       setReplyBody('');
       alert(`Reply email simulated and dispatched to ${replyMessage.email}`);
     } catch (err) {
-      alert('Failed to send reply');
+      console.error('Send reply error:', err);
+      alert(getErrorMessage(err, 'Failed to send reply'));
     }
   };
 
@@ -360,6 +390,7 @@ export const AdminPortal: React.FC = () => {
   const saveRoadmapStep = async (id: any) => {
     try {
       await updateRoadmapStep({
+        token: adminToken || '',
         id,
         phase: rmPhase,
         status: rmStatus,
@@ -370,16 +401,18 @@ export const AdminPortal: React.FC = () => {
       });
       setEditingRoadmapId(null);
     } catch (err) {
-      alert('Failed to save roadmap step');
+      console.error('Save roadmap step error:', err);
+      alert(getErrorMessage(err, 'Failed to save roadmap step'));
     }
   };
 
   const handleDeleteRoadmapStep = async (id: any) => {
     if (window.confirm('Delete this roadmap phase in Convex?')) {
       try {
-        await deleteRoadmapStep({ id });
+        await deleteRoadmapStep({ token: adminToken || '', id });
       } catch (err) {
-        alert('Failed to delete step');
+        console.error('Delete roadmap step error:', err);
+        alert(getErrorMessage(err, 'Failed to delete step'));
       }
     }
   };
@@ -387,6 +420,7 @@ export const AdminPortal: React.FC = () => {
   const handleAddRoadmapStep = async () => {
     try {
       await addRoadmapStep({
+        token: adminToken || '',
         phase: 'New Phase',
         status: 'Upcoming',
         statusColor: '#cbd5e1',
@@ -396,7 +430,8 @@ export const AdminPortal: React.FC = () => {
         orderIndex: roadmap.length
       });
     } catch (err) {
-      alert('Failed to add step');
+      console.error('Add roadmap step error:', err);
+      alert(getErrorMessage(err, 'Failed to add step'));
     }
   };
 
@@ -404,16 +439,17 @@ export const AdminPortal: React.FC = () => {
     const sorted = [...roadmap].sort((a: any, b: any) => (a.orderIndex ?? 0) - (b.orderIndex ?? 0));
     const targetIdx = direction === 'up' ? idx - 1 : idx + 1;
     if (targetIdx < 0 || targetIdx >= sorted.length) return;
-    
+
     const temp = sorted[idx];
     sorted[idx] = sorted[targetIdx];
     sorted[targetIdx] = temp;
 
     const orderedIds = sorted.map((item: any) => item._id);
     try {
-      await reorderRoadmap({ orderedIds });
+      await reorderRoadmap({ token: adminToken || '', orderedIds });
     } catch (err) {
-      alert('Failed to reorder steps');
+      console.error('Reorder roadmap steps error:', err);
+      alert(getErrorMessage(err, 'Failed to reorder steps'));
     }
   };
 
@@ -433,6 +469,7 @@ export const AdminPortal: React.FC = () => {
   const saveResearchArticle = async (id: any) => {
     try {
       await updateResearchArticle({
+        token: adminToken || '',
         id,
         category: resCategory,
         title: resTitle,
@@ -443,16 +480,18 @@ export const AdminPortal: React.FC = () => {
       });
       setEditingResearchId(null);
     } catch (err) {
-      alert('Failed to save research article');
+      console.error('Save research article error:', err);
+      alert(getErrorMessage(err, 'Failed to save research article'));
     }
   };
 
   const handleDeleteResearchArticle = async (id: any) => {
     if (window.confirm('Delete this research article in Convex?')) {
       try {
-        await deleteResearchArticle({ id });
+        await deleteResearchArticle({ token: adminToken || '', id });
       } catch (err) {
-        alert('Failed to delete article');
+        console.error('Delete research article error:', err);
+        alert(getErrorMessage(err, 'Failed to delete article'));
       }
     }
   };
@@ -460,6 +499,7 @@ export const AdminPortal: React.FC = () => {
   const handleAddResearchArticle = async () => {
     try {
       await addResearchArticle({
+        token: adminToken || '',
         category: 'General',
         title: 'New Research Paper',
         desc: 'Short abstract summary...',
@@ -468,7 +508,40 @@ export const AdminPortal: React.FC = () => {
         content: 'Write full content paragraphs here...'
       });
     } catch (err) {
-      alert('Failed to add article');
+      console.error('Add research article error:', err);
+      alert(getErrorMessage(err, 'Failed to add article'));
+    }
+  };
+  // Agent operations
+  const handleAddAgent = async () => {
+    try {
+      await addAgent({
+        token: adminToken || '',
+        name: 'New Custom Agent',
+        category: 'Custom',
+        description: 'Edit this agent to change its properties.',
+        rating: 5.0,
+        reviews: 0,
+        price: '$0/mo',
+        icon: 'Bot',
+        iconColor: '#3b82f6',
+        tags: ['New'],
+        status: 'Active'
+      });
+    } catch (err) {
+      console.error('Add agent error:', err);
+      alert(getErrorMessage(err, 'Failed to add agent'));
+    }
+  };
+
+  const handleDeleteAgent = async (id: any) => {
+    if (window.confirm('Delete this agent from the marketplace?')) {
+      try {
+        await deleteAgent({ token: adminToken || '', id });
+      } catch (err) {
+        console.error('Delete agent error:', err);
+        alert(getErrorMessage(err, 'Failed to delete agent'));
+      }
     }
   };
 
@@ -476,6 +549,7 @@ export const AdminPortal: React.FC = () => {
   const saveFounderProfile = async () => {
     try {
       await updateFounder({
+        token: adminToken || '',
         name: fdName,
         role: fdRole,
         storyPara1: fdStoryPara1,
@@ -484,33 +558,35 @@ export const AdminPortal: React.FC = () => {
       });
       alert('Founder profile overrides committed to Convex database successfully.');
     } catch (err) {
-      alert('Failed to save biography');
+      console.error('Save founder profile error:', err);
+      alert(getErrorMessage(err, 'Failed to save biography'));
     }
   };
 
   // Settings Save & Resets
   const saveSystemSettings = async () => {
-    if (!newPasscode.trim()) {
-      alert('Passcode cannot be empty.');
-      return;
-    }
     try {
-      await setSettingVal({ key: 'passcode', value: newPasscode });
-      await setSettingVal({ key: 'maintenance', value: maintenanceMode ? 'true' : 'false' });
+      if (newPasscode.trim()) {
+        await setSettingVal({ token: adminToken || '', key: 'passcode', value: newPasscode.trim() });
+      }
+      await setSettingVal({ token: adminToken || '', key: 'maintenance', value: maintenanceMode ? 'true' : 'false' });
+      setNewPasscode('');
       alert('System settings overrides committed to Convex database.');
     } catch (err) {
-      alert('Failed to save settings');
+      console.error('Save system settings error:', err);
+      alert(getErrorMessage(err, 'Failed to save settings'));
     }
   };
 
   const handleResetSystemData = async () => {
     if (window.confirm('WARNING: This will wipe all waitlist registries, contact inbox messages, custom roadmap milestones, research publications, and founder overrides in the Convex DB, returning system to defaults. Continue?')) {
       try {
-        await resetAllDb();
+        await resetAllDb({ token: adminToken || '' });
         alert('Convex database tables flushed. Reloading systems to trigger re-seeding...');
         window.location.reload();
       } catch (err) {
-        alert('Failed to reset system data');
+        console.error('Reset system data error:', err);
+        alert(getErrorMessage(err, 'Failed to reset system data'));
       }
     }
   };
@@ -576,19 +652,19 @@ export const AdminPortal: React.FC = () => {
       case 'maintenance':
         if (argument === '--on') {
           try {
-            await setSettingVal({ key: 'maintenance', value: 'true' });
+            await setSettingVal({ token: adminToken || '', key: 'maintenance', value: 'true' });
             setMaintenanceMode(true);
             currentLines.push('✓ Directive processed: Maintenance Mode set to ACTIVE.');
           } catch (err) {
-            currentLines.push('Error: Failed to write setting to database.');
+            currentLines.push(`Error: ${getErrorMessage(err, 'Failed to write setting to database.')}`);
           }
         } else if (argument === '--off') {
           try {
-            await setSettingVal({ key: 'maintenance', value: 'false' });
+            await setSettingVal({ token: adminToken || '', key: 'maintenance', value: 'false' });
             setMaintenanceMode(false);
             currentLines.push('✓ Directive processed: Maintenance Mode set to INACTIVE.');
           } catch (err) {
-            currentLines.push('Error: Failed to write setting to database.');
+            currentLines.push(`Error: ${getErrorMessage(err, 'Failed to write setting to database.')}`);
           }
         } else {
           currentLines.push('Syntax Error: Use "maintenance --on" or "maintenance --off".');
@@ -667,9 +743,6 @@ export const AdminPortal: React.FC = () => {
             </button>
           </form>
           
-          <div style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.75rem', color: 'var(--muted-color)' }}>
-            Passcode hint: <code>zyntral2026</code>
-          </div>
         </div>
       </div>
     );
@@ -687,6 +760,7 @@ export const AdminPortal: React.FC = () => {
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '4px', marginTop: '15px', overflowY: 'auto', flex: 1 }}>
           {[
             { id: 'overview', label: 'System Overview', icon: Server },
+            { id: 'agents', label: 'Agents Registry', icon: Bot },
             { id: 'submissions', label: 'Waitlist Registry', icon: Users, count: waitlist.filter((w: any) => w.status === 'Pending').length },
             { id: 'contacts', label: 'Contact Messages', icon: Mail, count: contactMessages.filter((c: any) => c.status === 'Unread').length },
             { id: 'pipelines', label: 'Pipeline Registry', icon: Cpu, count: pipelines.length },
@@ -824,6 +898,58 @@ export const AdminPortal: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+          </div>
+        )}
+
+        {/* Tab: Agents Registry */}
+        {adminTab === 'agents' && (
+          <div>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <div>
+                <h2 style={{ fontSize: '1.6rem', fontFamily: 'var(--font-display)' }}>Agents Registry</h2>
+                <p style={{ color: 'var(--muted-color)', fontSize: '0.85rem', marginTop: '2px' }}>
+                  Manage AI agents available on the marketplace. Approve, reject, or feature submissions.
+                </p>
+              </div>
+              <button onClick={handleAddAgent} className="btn-primary" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.8rem', padding: '8px 16px' }}>
+                <Plus size={14} /> Add New Agent
+              </button>
+            </div>
+            
+            <div className="glass-card" style={{ padding: '0', overflowX: 'auto' }}>
+              <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', minWidth: '800px' }}>
+                <thead>
+                  <tr style={{ background: 'rgba(255,255,255,0.01)', borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                    <th style={{ padding: '14px 18px', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--muted-color)', fontWeight: 600 }}>Agent Name</th>
+                    <th style={{ padding: '14px 18px', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--muted-color)', fontWeight: 600 }}>Category</th>
+                    <th style={{ padding: '14px 18px', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--muted-color)', fontWeight: 600 }}>Price</th>
+                    <th style={{ padding: '14px 18px', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--muted-color)', fontWeight: 600 }}>Status</th>
+                    <th style={{ padding: '14px 18px', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--muted-color)', fontWeight: 600 }}>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {agents.map((agent: any) => (
+                    <tr key={agent._id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                      <td style={{ padding: '14px 18px' }}>
+                        <div style={{ fontWeight: 600, color: '#fff', fontSize: '0.85rem' }}>{agent.name}</div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--muted-color)', marginTop: '2px', maxWidth: '200px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{agent.description}</div>
+                      </td>
+                      <td style={{ padding: '14px 18px', fontSize: '0.85rem' }}>{agent.category}</td>
+                      <td style={{ padding: '14px 18px', fontSize: '0.85rem' }}>{agent.price}</td>
+                      <td style={{ padding: '14px 18px' }}>
+                        <span className="badge" style={{ background: agent.status === 'Active' ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: agent.status === 'Active' ? 'var(--green)' : '#ef4444', border: `1px solid ${agent.status === 'Active' ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'}`, fontSize: '0.65rem', padding: '2px 8px', borderRadius: '4px' }}>{agent.status}</span>
+                      </td>
+                      <td style={{ padding: '14px 18px' }}>
+                        <div style={{ display: 'flex', gap: '8px' }}>
+                          <button style={{ background: 'transparent', border: 'none', color: '#6b7280', cursor: 'pointer', padding: '4px' }}><Edit2 size={14} /></button>
+                          <button onClick={() => handleDeleteAgent(agent._id)} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', padding: '4px' }}><Trash2 size={14} /></button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
             </div>
           </div>
         )}
@@ -1387,11 +1513,12 @@ export const AdminPortal: React.FC = () => {
               <div className="input-group" style={{ marginBottom: 0 }}>
                 <label className="input-label">Admin Passcode Lock</label>
                 <div style={{ position: 'relative' }}>
-                  <input 
-                    type={showPasscode ? 'text' : 'password'} 
+                  <input
+                    type={showPasscode ? 'text' : 'password'}
                     value={newPasscode}
                     onChange={e => setNewPasscode(e.target.value)}
                     className="input-field"
+                    placeholder="Leave blank to keep current passcode"
                     style={{ paddingRight: '40px' }}
                   />
                   <button 
@@ -1499,7 +1626,8 @@ export const AdminPortal: React.FC = () => {
                                   try {
                                     await deletePipeline({ id: pipe._id });
                                   } catch (err) {
-                                    alert('Failed to delete pipeline.');
+                                    console.error('Delete pipeline error:', err);
+                                    alert(getErrorMessage(err, 'Failed to delete pipeline.'));
                                   }
                                 }
                               }}

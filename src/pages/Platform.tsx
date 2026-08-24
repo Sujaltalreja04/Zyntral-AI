@@ -35,6 +35,7 @@ export const Platform: React.FC = () => {
       try {
         await removePipeline({ id });
       } catch (err) {
+        console.error('Delete pipeline error:', err);
         alert('Failed to delete pipeline.');
       }
     }

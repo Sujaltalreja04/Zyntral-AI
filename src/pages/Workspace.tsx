@@ -27,7 +27,11 @@ interface CanvasNode {
 // Donut Chart Component
 const DonutChart: React.FC<{ data: { label: string; value: number; color: string }[] }> = ({ data }) => {
   const total = data.reduce((acc, d) => acc + d.value, 0);
-  let accumulatedAngle = 0;
+  const percentages = data.map(item => (total > 0 ? (item.value / total) * 100 : 0));
+  const cumulativeAngles = percentages.reduce<number[]>((acc, _pct, idx) => {
+    acc.push(idx === 0 ? 0 : acc[idx - 1] + percentages[idx - 1]);
+    return acc;
+  }, []);
 
   return (
     <div className="donut-chart-wrapper" style={{ alignItems: 'center' }}>
@@ -35,10 +39,9 @@ const DonutChart: React.FC<{ data: { label: string; value: number; color: string
         <svg width="100%" height="100%" viewBox="0 0 42 42" className="donut">
           <circle cx="21" cy="21" r="15.915" fill="transparent" stroke="rgba(255,255,255,0.05)" strokeWidth="4" />
           {data.map((item, idx) => {
-            const percentage = total > 0 ? (item.value / total) * 100 : 0;
+            const percentage = percentages[idx];
             const strokeDashArray = `${percentage} ${100 - percentage}`;
-            const strokeDashOffset = 100 - accumulatedAngle + 25;
-            accumulatedAngle += percentage;
+            const strokeDashOffset = 100 - cumulativeAngles[idx] + 25;
 
             return (
               <circle

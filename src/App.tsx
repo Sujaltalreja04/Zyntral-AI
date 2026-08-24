@@ -10,6 +10,7 @@ const Roadmap = React.lazy(() => import('./pages/Roadmap').then(m => ({ default:
 const Waitlist = React.lazy(() => import('./pages/Waitlist').then(m => ({ default: m.Waitlist })));
 const Contact = React.lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
 const Platform = React.lazy(() => import('./pages/Platform').then(m => ({ default: m.Platform })));
+const Marketplace = React.lazy(() => import('./pages/Marketplace').then(m => ({ default: m.Marketplace })));
 
 // Legal section imports
 const PrivacyPolicy = React.lazy(() => import('./pages/legal/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
@@ -34,6 +35,7 @@ interface NavigationItem {
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Home', path: '/' },
+  { label: 'Marketplace', path: '/marketplace' },
   { label: 'Workspace Console', path: '/workspace' },
   { label: 'Developer Sandbox', path: '/platform' },
   { label: 'Roadmap', path: '/roadmap' },
@@ -67,7 +69,7 @@ const Navigation: React.FC = () => {
   };
 
   // Do not show main navbar inside the admin dashboard to optimize focus space
-  if (location.pathname === '/sujal' && sessionStorage.getItem('zyntral_admin_authed') === 'true') {
+  if (location.pathname === '/admin' && sessionStorage.getItem('zyntral_admin_authed') === 'true') {
     return null;
   }
 
@@ -211,7 +213,7 @@ const Footer: React.FC = () => {
 
   // Hide footer in admin dashboard and workspace console
   if (
-    (location.pathname === '/sujal' && sessionStorage.getItem('zyntral_admin_authed') === 'true') ||
+    (location.pathname === '/admin' && sessionStorage.getItem('zyntral_admin_authed') === 'true') ||
     location.pathname === '/workspace'
   ) {
     return null;
@@ -314,6 +316,7 @@ export const App: React.FC = () => {
         }>
           <Routes>
             <Route path="/" element={<Home />} />
+            <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/workspace" element={<Workspace />} />
             <Route path="/platform" element={<Platform />} />
             <Route path="/roadmap" element={<Roadmap />} />
@@ -321,7 +324,7 @@ export const App: React.FC = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/legal/terms" element={<Terms />} />
-            <Route path="/sujal" element={<AdminPortal />} />
+            <Route path="/admin" element={<AdminPortal />} />
           </Routes>
         </React.Suspense>
       </div>

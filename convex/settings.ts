@@ -1,9 +1,18 @@
+import { ConvexError } from "convex/values";
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdmin, newSessionExpiry } from "./adminAuth";
+
+const DEFAULT_PASSCODE = "zyntral2026";
 
 export const getVal = query({
   args: { key: v.string() },
   handler: async (ctx, args) => {
+    // The passcode itself must never be sent to the client, otherwise
+    // anyone loading the admin page could read it straight off the wire.
+    if (args.key === "passcode") {
+      return null;
+    }
     const match = await ctx.db
       .query("settings")
       .withIndex("by_key", (q) => q.eq("key", args.key))
@@ -12,9 +21,56 @@ export const getVal = query({
   },
 });
 
-export const setVal = mutation({
-  args: { key: v.string(), value: v.string() },
+export const login = mutation({
+  args: { passcode: v.string() },
   handler: async (ctx, args) => {
+    const match = await ctx.db
+      .query("settings")
+      .withIndex("by_key", (q) => q.eq("key", "passcode"))
+      .first();
+    const currentPasscode = match ? match.value : DEFAULT_PASSCODE;
+
+    if (args.passcode !== currentPasscode) {
+      throw new ConvexError("Invalid passcode");
+    }
+
+    const token = crypto.randomUUID();
+    await ctx.db.insert("admin_sessions", {
+      token,
+      expiresAt: newSessionExpiry(),
+    });
+    return token;
+  },
+});
+
+export const validateSession = query({
+  args: { token: v.string() },
+  handler: async (ctx, args) => {
+    const session = await ctx.db
+      .query("admin_sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .unique();
+    return !!session && session.expiresAt > Date.now();
+  },
+});
+
+export const logout = mutation({
+  args: { token: v.string() },
+  handler: async (ctx, args) => {
+    const session = await ctx.db
+      .query("admin_sessions")
+      .withIndex("by_token", (q) => q.eq("token", args.token))
+      .unique();
+    if (session) {
+      await ctx.db.delete(session._id);
+    }
+  },
+});
+
+export const setVal = mutation({
+  args: { token: v.string(), key: v.string(), value: v.string() },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
     const match = await ctx.db
       .query("settings")
       .withIndex("by_key", (q) => q.eq("key", args.key))
@@ -28,8 +84,10 @@ export const setVal = mutation({
 });
 
 export const resetAll = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: { token: v.string() },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
+
     // Delete all waitlist items
     const waitlistItems = await ctx.db.query("waitlist").collect();
     for (const item of waitlistItems) {

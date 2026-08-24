@@ -47,6 +47,10 @@ export default defineSchema({
     key: v.string(),
     value: v.string(),
   }).index("by_key", ["key"]),
+  admin_sessions: defineTable({
+    token: v.string(),
+    expiresAt: v.number(),
+  }).index("by_token", ["token"]),
   pipelines: defineTable({
     name: v.string(),
     description: v.string(),
@@ -59,5 +63,17 @@ export default defineSchema({
     appType: v.optional(v.string()),    // 'rag', 'website', 'training'
     scaleLimit: v.optional(v.string()), // e.g., '50,000 Users'
     cloudTarget: v.optional(v.string()) // e.g., 'AWS Fargate'
+  }),
+  agents: defineTable({
+    name: v.string(),
+    category: v.string(),
+    description: v.string(),
+    rating: v.number(),
+    reviews: v.number(),
+    price: v.string(),
+    icon: v.string(), // Name of the lucide icon, e.g. "Code", "Bot"
+    iconColor: v.string(), // e.g. "#3b82f6"
+    tags: v.array(v.string()),
+    status: v.string(), // e.g. "Active", "Inactive"
   }),
 });

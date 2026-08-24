@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdmin } from "./adminAuth";
 
 export const get = query({
   args: {},
@@ -31,11 +32,13 @@ export const add = mutation({
 
 export const updateStatus = mutation({
   args: {
+    token: v.string(),
     id: v.id("waitlist"),
     status: v.string(),
     apiKey: v.union(v.string(), v.null()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
     await ctx.db.patch(args.id, {
       status: args.status,
       apiKey: args.apiKey,
@@ -44,15 +47,17 @@ export const updateStatus = mutation({
 });
 
 export const remove = mutation({
-  args: { id: v.id("waitlist") },
+  args: { token: v.string(), id: v.id("waitlist") },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
     await ctx.db.delete(args.id);
   },
 });
 
 export const purge = mutation({
-  args: {},
-  handler: async (ctx) => {
+  args: { token: v.string() },
+  handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
     const all = await ctx.db.query("waitlist").collect();
     for (const item of all) {
       await ctx.db.delete(item._id);

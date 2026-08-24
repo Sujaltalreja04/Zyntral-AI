@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdmin } from "./adminAuth";
 
 export const get = query({
   args: {},
@@ -30,10 +31,12 @@ export const add = mutation({
 
 export const updateStatus = mutation({
   args: {
+    token: v.string(),
     id: v.id("contact_messages"),
     status: v.string(),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
     await ctx.db.patch(args.id, {
       status: args.status,
     });
@@ -41,8 +44,9 @@ export const updateStatus = mutation({
 });
 
 export const remove = mutation({
-  args: { id: v.id("contact_messages") },
+  args: { token: v.string(), id: v.id("contact_messages") },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
     await ctx.db.delete(args.id);
   },
 });

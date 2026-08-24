@@ -1,5 +1,6 @@
 import { query, mutation } from "./_generated/server";
 import { v } from "convex/values";
+import { requireAdmin } from "./adminAuth";
 
 export const get = query({
   args: {},
@@ -45,6 +46,7 @@ export const seed = mutation({
 
 export const add = mutation({
   args: {
+    token: v.string(),
     category: v.string(),
     title: v.string(),
     desc: v.string(),
@@ -53,13 +55,16 @@ export const add = mutation({
     content: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
-    const id = await ctx.db.insert("research", args);
+    await requireAdmin(ctx, args.token);
+    const { token: _token, ...article } = args;
+    const id = await ctx.db.insert("research", article);
     return id;
   },
 });
 
 export const update = mutation({
   args: {
+    token: v.string(),
     id: v.id("research"),
     category: v.string(),
     title: v.string(),
@@ -69,6 +74,7 @@ export const update = mutation({
     content: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
     await ctx.db.patch(args.id, {
       category: args.category,
       title: args.title,
@@ -81,8 +87,9 @@ export const update = mutation({
 });
 
 export const remove = mutation({
-  args: { id: v.id("research") },
+  args: { token: v.string(), id: v.id("research") },
   handler: async (ctx, args) => {
+    await requireAdmin(ctx, args.token);
     await ctx.db.delete(args.id);
   },
 });

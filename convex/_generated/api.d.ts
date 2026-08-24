@@ -9,6 +9,8 @@
  */
 
 import type * as about from "../about.js";
+import type * as adminAuth from "../adminAuth.js";
+import type * as agents from "../agents.js";
 import type * as contacts from "../contacts.js";
 import type * as pipelines from "../pipelines.js";
 import type * as research from "../research.js";
@@ -24,6 +26,8 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   about: typeof about;
+  adminAuth: typeof adminAuth;
+  agents: typeof agents;
   contacts: typeof contacts;
   pipelines: typeof pipelines;
   research: typeof research;
