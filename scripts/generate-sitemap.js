@@ -12,6 +12,7 @@ const SITE_DOMAIN = 'https://www.zyntral.dev';
 const STATIC_ROUTES = [
   '',
   '/workspace',
+  '/marketplace',
   '/platform',
   '/roadmap',
   '/waitlist',

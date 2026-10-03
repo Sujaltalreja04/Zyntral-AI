@@ -33,7 +33,7 @@ export const SEO: React.FC<SEOProps> = ({
   description,
   keywords = [],
   path = '',
-  image = 'https://www.zyntral.dev/assets/Zyntral%20LOGO%20REAL.jpg', // absolute path placeholder for sharing
+  image = 'https://www.zyntral.dev/og-image.jpg',
   type = 'website',
   schema
 }) => {

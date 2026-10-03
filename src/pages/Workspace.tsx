@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useQuery, useMutation } from 'convex/react';
 import { api } from '../../convex/_generated/api';
 import { SEO } from '../components/SEO';
@@ -6,7 +7,7 @@ import {
   Database, Cpu, ArrowRight, Play, 
   Sliders, Terminal, Sparkles, MessageSquare,
   BarChart2, Search, ChevronDown,
-  FileText, Cloud, Layers, PlusCircle, Code, Copy, Download, Check
+  FileText, Cloud, Layers, PlusCircle, Code, Copy, Download, Check, X
 } from 'lucide-react';
 
 interface MockChunk {
@@ -89,12 +90,23 @@ export const Workspace: React.FC = () => {
   const pipelines = useQuery(api.pipelines.get) || [];
   const addPipeline = useMutation(api.pipelines.add);
 
-  // Tabs layout
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState<'analytics' | 'builder' | 'create' | 'execution'>('builder');
+  const [deployedAgentBanner, setDeployedAgentBanner] = useState<string | null>(location.state?.selectedAgent || null);
 
   // Command Palette
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [commandSearchQuery, setCommandSearchQuery] = useState('');
+
+  useEffect(() => {
+    if (location.state?.selectedAgent) {
+      setDeployedAgentBanner(location.state.selectedAgent);
+      if (location.state.prompt) {
+        setPromptInput(location.state.prompt);
+      }
+      setActiveTab('create');
+    }
+  }, [location.state]);
 
   // Preset Templates
   const PRODUCTION_TEMPLATES = [
@@ -657,6 +669,46 @@ export const Workspace: React.FC = () => {
           display: 'flex',
           flexDirection: 'column'
         }}>
+          {deployedAgentBanner && (
+            <div style={{
+              margin: '16px 24px 0 24px',
+              padding: '12px 18px',
+              backgroundColor: 'rgba(34, 197, 94, 0.08)',
+              border: '1px solid rgba(34, 197, 94, 0.25)',
+              borderRadius: '12px',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              gap: '12px',
+              boxShadow: '0 0 15px rgba(34, 197, 94, 0.15)'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <Sparkles size={18} color="#22c55e" />
+                <div>
+                  <span style={{ fontSize: '0.88rem', fontWeight: 700, color: '#ffffff' }}>
+                    Deployed Agent: {deployedAgentBanner}
+                  </span>
+                  <span style={{ fontSize: '0.82rem', color: '#94a3b8', marginLeft: '8px' }}>
+                    Agent system prompt, architecture, and compiler parameters pre-loaded into workspace.
+                  </span>
+                </div>
+              </div>
+              <button 
+                onClick={() => setDeployedAgentBanner(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: '#94a3b8',
+                  cursor: 'pointer',
+                  padding: '4px',
+                  display: 'flex',
+                  alignItems: 'center'
+                }}
+              >
+                <X size={16} />
+              </button>
+            </div>
+          )}
           
           {/* Top Info Header */}
           <div style={{
