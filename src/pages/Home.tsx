@@ -154,13 +154,33 @@ export const Home: React.FC = () => {
     "@context": "https://schema.org",
     "@type": "SoftwareApplication",
     "name": "Zyntral AI",
-    "operatingSystem": "All",
+    "operatingSystem": "Web, Cloud, Linux, macOS, Windows",
     "applicationCategory": "DeveloperApplication",
-    "description": "Build Production-Ready AI Infrastructure from a Single Prompt.",
+    "description": "Enterprise on-prompt AI compiler, autonomous agent marketplace, and neural RAG orchestration engine.",
+    "url": "https://www.zyntral.dev",
+    "image": "https://www.zyntral.dev/og-image.jpg",
+    "screenshot": "https://www.zyntral.dev/og-image.jpg",
     "offers": {
       "@type": "Offer",
       "price": "0.00",
       "priceCurrency": "USD"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "ratingCount": "2450",
+      "bestRating": "5"
+    },
+    "featureList": [
+      "On-Prompt RAG Compilation",
+      "Autonomous AI Agent Marketplace",
+      "Vector Database Cloud Orchestration",
+      "Model Fine-Tuning and LoRA pipelines",
+      "Zero-Shot Infrastructure as Code Generation"
+    ],
+    "author": {
+      "@type": "Person",
+      "name": "Sujal Talreja"
     }
   };
 

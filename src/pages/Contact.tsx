@@ -62,10 +62,21 @@ export const Contact: React.FC = () => {
       position: 'relative'
     }}>
       <SEO
-        title="Contact Us - Technical Inquiries"
+        title="Contact Us - Technical Inquiries & Enterprise Support"
         description="Contact the Zyntral Labs team for developer support, custom enterprise licensing options, or custom GPU cluster coordination inquiries."
         path="/contact"
-        keywords={['Contact Zyntral', 'developer support', 'enterprise sales', 'API help']}
+        keywords={['Contact Zyntral', 'developer support', 'enterprise sales', 'API help', 'Zyntral support']}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Contact', path: '/contact' }
+        ]}
+        schema={{
+          '@context': 'https://schema.org',
+          '@type': 'ContactPage',
+          'name': 'Contact Zyntral AI',
+          'description': 'Contact the Zyntral Labs team for technical support, enterprise deployments, and inquiries.',
+          'url': 'https://www.zyntral.dev/contact'
+        }}
       />
       <div className="container" style={{ maxWidth: '650px', position: 'relative', zIndex: 5 }}>
         

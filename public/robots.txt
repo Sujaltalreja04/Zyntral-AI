@@ -2,6 +2,8 @@ User-agent: *
 Allow: /
 
 # Exclude admin portals from indexing to maintain security and avoid search pollution
+Disallow: /eranix
+Disallow: /eranix/*
 Disallow: /admin
 Disallow: /admin/*
 

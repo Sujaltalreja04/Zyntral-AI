@@ -1,8 +1,18 @@
 import React from 'react';
+import { SEO } from '../../components/SEO';
 
 export const Terms: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Terms of Service | Zyntral AI"
+        description="Review the Zyntral AI developer terms of service, acceptable computing use policies, API quotas, and platform terms."
+        path="/legal/terms"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Terms of Service', path: '/legal/terms' }
+        ]}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '800px' }}>
         
         {/* Header */}

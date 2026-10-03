@@ -50,9 +50,14 @@ export const Platform: React.FC = () => {
       position: 'relative'
     }}>
       <SEO
-        title="Developer Sandbox - Visual AI RAG & Training Compilers"
-        description="Experiment with prompt-to-RAG compilation structures, neural fine-tuning loops, and orchestrate active agent nodes."
+        title="Developer Platform & Sandbox | Neural Fine-Tuning & RAG Compilers"
+        description="Experiment with prompt-to-RAG compilation structures, neural fine-tuning loops, and orchestrate active agent nodes on the Zyntral developer platform."
         path="/platform"
+        keywords={['Developer Sandbox', 'Neural Fine-Tuning', 'AI RAG Compiler', 'Agent Nodes', 'Zyntral Platform']}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Platform', path: '/platform' }
+        ]}
       />
 
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '60px' }}>

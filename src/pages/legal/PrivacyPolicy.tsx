@@ -1,8 +1,18 @@
 import React from 'react';
+import { SEO } from '../../components/SEO';
 
 export const PrivacyPolicy: React.FC = () => {
   return (
     <div style={{ paddingTop: '100px', minHeight: '100vh', position: 'relative' }}>
+      <SEO
+        title="Privacy Policy | Zyntral AI"
+        description="Review the Zyntral AI privacy policy, data isolation protocols, tenant security boundaries, and developer rights."
+        path="/legal/privacy-policy"
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Privacy Policy', path: '/legal/privacy-policy' }
+        ]}
+      />
       <div className="container" style={{ position: 'relative', zIndex: 5, marginBottom: '80px', maxWidth: '800px' }}>
         
         {/* Header */}

@@ -459,9 +459,14 @@ export const Workspace: React.FC = () => {
       position: 'relative'
     }}>
       <SEO
-        title="Visual Workspace Console"
-        description="Assemble, catalog, compile, and deploy production-ready AI infrastructures."
+        title="Visual Workspace Console | Enterprise RAG Compiler & Agent Orchestration"
+        description="Assemble, compile, test, and deploy production-ready AI infrastructures, custom vector databases, and autonomous agents with real-time telemetry."
         path="/workspace"
+        keywords={['Visual AI Workspace', 'RAG Compiler Console', 'Agent Orchestration Console', 'Vector DB Architecture', 'Enterprise AI Infrastructure']}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Workspace', path: '/workspace' }
+        ]}
       />
 
       {/* Outer Card Container */}

@@ -66,10 +66,14 @@ export const Waitlist: React.FC = () => {
       position: 'relative'
     }}>
       <SEO
-        title="Apply for Sandbox Waitlist"
+        title="Apply for Sandbox Waitlist | Early Access API Keys"
         description="Submit your application to request developer sandbox access and obtain API keys for Zyntral AI compiler orchestration and node services."
         path="/waitlist"
-        keywords={['Developer waitlist', 'API key access', 'GPU sandbox access', 'Zyntral keys']}
+        keywords={['Developer waitlist', 'API key access', 'GPU sandbox access', 'Zyntral keys', 'early access']}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Waitlist', path: '/waitlist' }
+        ]}
       />
       <div className="container" style={{ maxWidth: '650px', position: 'relative', zIndex: 5 }}>
         

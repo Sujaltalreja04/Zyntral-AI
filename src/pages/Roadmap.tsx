@@ -32,10 +32,14 @@ export const Roadmap: React.FC = () => {
       position: 'relative'
     }}>
       <SEO
-        title="Product Roadmap & Launch Timeline"
-        description="Follow the Zyntral AI compiler and edge node development phases, release updates, and planned launch milestones."
+        title="Product Roadmap & Launch Timeline | Zyntral AI Milestones"
+        description="Follow the Zyntral AI compiler and edge node development phases, release updates, decentralization schedule, and planned launch milestones."
         path="/roadmap"
-        keywords={['Zyntral roadmap', 'AI roadmap', 'release timeline', 'product phases']}
+        keywords={['Zyntral roadmap', 'AI roadmap', 'release timeline', 'product phases', 'decentralized compute timeline']}
+        breadcrumbs={[
+          { name: 'Home', path: '/' },
+          { name: 'Roadmap', path: '/roadmap' }
+        ]}
       />
       
       {/* Floating Roadmap Container */}

@@ -15,6 +15,7 @@ const Marketplace = React.lazy(() => import('./pages/Marketplace').then(m => ({ 
 // Legal section imports
 const PrivacyPolicy = React.lazy(() => import('./pages/legal/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
 const Terms = React.lazy(() => import('./pages/legal/Terms').then(m => ({ default: m.Terms })));
+const NotFound = React.lazy(() => import('./pages/NotFound').then(m => ({ default: m.NotFound })));
 
 import logoImg from './assets/Zyntral LOGO REAL.jpg';
 import { Menu, X } from 'lucide-react';
@@ -70,7 +71,7 @@ const Navigation: React.FC = () => {
   };
 
   // Do not show main navbar inside the admin dashboard to optimize focus space
-  if (location.pathname === '/admin' && sessionStorage.getItem('zyntral_admin_authed') === 'true') {
+  if (location.pathname === '/eranix' && sessionStorage.getItem('zyntral_admin_authed') === 'true') {
     return null;
   }
 
@@ -214,7 +215,7 @@ const Footer: React.FC = () => {
 
   // Hide footer in admin dashboard and workspace console
   if (
-    (location.pathname === '/admin' && sessionStorage.getItem('zyntral_admin_authed') === 'true') ||
+    (location.pathname === '/eranix' && sessionStorage.getItem('zyntral_admin_authed') === 'true') ||
     location.pathname === '/workspace'
   ) {
     return null;
@@ -326,7 +327,8 @@ export const App: React.FC = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/legal/terms" element={<Terms />} />
-            <Route path="/admin" element={<AdminPortal />} />
+            <Route path="/eranix" element={<AdminPortal />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </React.Suspense>
       </div>
