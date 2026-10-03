@@ -86,3 +86,21 @@ export const seed = mutation({
     }
   },
 });
+
+export const cleanThemeColors = mutation({
+  args: {},
+  handler: async (ctx) => {
+    const agents = await ctx.db.query("agents").collect();
+    for (const a of agents) {
+      let newColor = a.iconColor;
+      if (a.name === 'SupportBot Elite') newColor = '#38bdf8';
+      if (a.name === 'Copywriter Gen') newColor = '#eab308';
+      if (a.name === 'AutoDev Pro') newColor = '#22c55e';
+      if (a.name === 'SecOps Sentinel') newColor = '#22c55e';
+      if (newColor !== a.iconColor) {
+        await ctx.db.patch(a._id, { iconColor: newColor });
+      }
+    }
+  },
+});
+
