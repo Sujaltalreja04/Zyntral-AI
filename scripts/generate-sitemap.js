@@ -18,6 +18,7 @@ const ROUTE_CONFIGS = [
   { path: '/roadmap', priority: '0.80', changefreq: 'weekly' },
   { path: '/waitlist', priority: '0.80', changefreq: 'weekly' },
   { path: '/contact', priority: '0.70', changefreq: 'monthly' },
+  { path: '/about', priority: '0.85', changefreq: 'weekly' },
   { path: '/legal/privacy-policy', priority: '0.30', changefreq: 'monthly' },
   { path: '/legal/terms', priority: '0.30', changefreq: 'monthly' }
 ];

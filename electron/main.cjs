@@ -2,12 +2,15 @@ const { app, BrowserWindow } = require('electron');
 const path = require('path');
 
 function createWindow() {
+  const isDev = process.env.ELECTRON_DEV === 'true';
+
   const win = new BrowserWindow({
     width: 1366,
     height: 800,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      devTools: isDev,
       preload: path.join(__dirname, 'preload.cjs')
     },
     icon: path.join(__dirname, '../public/favicon.ico'),
@@ -16,7 +19,11 @@ function createWindow() {
     autoHideMenuBar: true
   });
 
-  const isDev = process.env.ELECTRON_DEV === 'true';
+  if (!isDev) {
+    win.webContents.on('devtools-opened', () => {
+      win.webContents.closeDevTools();
+    });
+  }
 
   if (isDev) {
     win.loadURL('http://localhost:5173');

@@ -144,6 +144,8 @@ body {
   gap: 10px;
   cursor: pointer;
   text-decoration: none;
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 
 .nav-links {
@@ -174,7 +176,7 @@ body {
   left: 50%;
   width: 0%;
   height: 1.5px;
-  background: var(--accent-indigo);
+  background: #22c55e;
   transition: all 0.2s ease;
   transform: translateX(-50%);
 }

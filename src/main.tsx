@@ -5,6 +5,10 @@ import App from './App.tsx'
 import { ConvexProvider, ConvexReactClient } from "convex/react";
 import { HelmetProvider } from 'react-helmet-async';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { initSourceProtection } from './utils/security';
+
+// Initialize anti-inspection and shortcut guards for production
+initSourceProtection();
 
 // Retrieve the Convex URL from the environment with a mock fallback to prevent runtime crashes prior to local link setup
 const convexUrl = import.meta.env.VITE_CONVEX_URL || "https://mock-deployment.convex.cloud";

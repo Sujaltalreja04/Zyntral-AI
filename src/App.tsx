@@ -11,6 +11,7 @@ const Waitlist = React.lazy(() => import('./pages/Waitlist').then(m => ({ defaul
 const Contact = React.lazy(() => import('./pages/Contact').then(m => ({ default: m.Contact })));
 const Platform = React.lazy(() => import('./pages/Platform').then(m => ({ default: m.Platform })));
 const Marketplace = React.lazy(() => import('./pages/Marketplace').then(m => ({ default: m.Marketplace })));
+const Story = React.lazy(() => import('./pages/Story').then(m => ({ default: m.Story })));
 
 // Legal section imports
 const PrivacyPolicy = React.lazy(() => import('./pages/legal/PrivacyPolicy').then(m => ({ default: m.PrivacyPolicy })));
@@ -40,6 +41,7 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
   { label: 'Marketplace', path: '/marketplace' },
   { label: 'Workspace Console', path: '/workspace' },
   { label: 'Developer Sandbox', path: '/platform' },
+  { label: 'Story', path: '/about' },
   { label: 'Roadmap', path: '/roadmap' },
   { label: 'Contact', path: '/contact' }
 ];
@@ -83,18 +85,7 @@ const Navigation: React.FC = () => {
           ZYNTRAL AI
         </Link>
         
-        <ul className="nav-links desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-          {/* Centered Dark Pill Menu */}
-          <div style={{ 
-            background: '#12131a', 
-            borderRadius: '9999px', 
-            padding: '8px 24px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            gap: '24px',
-            border: '1px solid rgba(255,255,255,0.06)',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
-          }}>
+        <ul className="nav-links desktop-only" style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
             {NAVIGATION_ITEMS.map(item => (
               <li key={item.path} style={{ listStyle: 'none' }}>
                 <Link 
@@ -113,7 +104,6 @@ const Navigation: React.FC = () => {
                 </Link>
               </li>
             ))}
-          </div>
         </ul>
 
         {/* Right Action Button */}
@@ -243,6 +233,8 @@ const Footer: React.FC = () => {
             <h4 style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '15px' }}>Product</h4>
             <ul style={{ listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem' }}>
               <li><Link to="/" style={{ color: 'var(--muted-color)', textDecoration: 'none' }}>Home</Link></li>
+              <li><Link to="/about" style={{ color: 'var(--muted-color)', textDecoration: 'none' }}>Story & Founder</Link></li>
+              <li><Link to="/marketplace" style={{ color: 'var(--muted-color)', textDecoration: 'none' }}>Agent Marketplace</Link></li>
               <li><Link to="/workspace" style={{ color: 'var(--muted-color)', textDecoration: 'none' }}>Workspace Console</Link></li>
               <li><Link to="/roadmap" style={{ color: 'var(--muted-color)', textDecoration: 'none' }}>Roadmap</Link></li>
               <li><Link to="/waitlist" style={{ color: 'var(--muted-color)', textDecoration: 'none' }}>Join Waitlist</Link></li>
@@ -327,6 +319,8 @@ export const App: React.FC = () => {
             <Route path="/contact" element={<Contact />} />
             <Route path="/legal/privacy-policy" element={<PrivacyPolicy />} />
             <Route path="/legal/terms" element={<Terms />} />
+            <Route path="/about" element={<Story />} />
+            <Route path="/story" element={<Story />} />
             <Route path="/eranix" element={<AdminPortal />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
